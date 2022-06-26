@@ -26,7 +26,6 @@ model User {
 
         Organisation   Organisation? @relation(fields: [organisationId], references: [id])
         organisationId Int?
-        @@index(email)
 }
 
 model Link {
@@ -45,8 +44,6 @@ model Link {
 
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
-
-        @@index(slug)
 }
 
 model Project {
