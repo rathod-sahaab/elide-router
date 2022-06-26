@@ -14,11 +14,12 @@ export class AuthService {
 
 	async validateUser(email: string, password: string): Promise<UserWithoutPassword> {
 		const user = await this.usersService.user({ email })
-		// FIXME: use argon2
+
 		if (user && (await this.cryptoService.verify_password(password, user.password))) {
 			const { password, ...rest } = user
 			return rest
 		}
+
 		return null
 	}
 
