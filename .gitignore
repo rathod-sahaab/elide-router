@@ -41,3 +41,6 @@ pnpm-lock.yaml
 # devel db artifacts
 dev.db
 dev.db-journal
+
+# configuration and sensitive files
+.env
