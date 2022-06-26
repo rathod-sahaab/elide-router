@@ -6,6 +6,7 @@ import { LocalStrategy } from './strategies/local.strategy'
 import { AuthController } from './auth.controller'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
+import { PrismaService } from 'src/prisma.service'
 
 @Module({
 	imports: [
@@ -17,9 +18,10 @@ import { ConfigService } from '@nestjs/config'
 					expiresIn: config.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
 				},
 			}),
+			inject: [ConfigService],
 		}),
 	],
-	providers: [AuthService, UserService, LocalStrategy],
+	providers: [AuthService, UserService, LocalStrategy, PrismaService],
 	controllers: [AuthController],
 })
 export class AuthModule {}
