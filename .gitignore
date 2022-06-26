@@ -37,3 +37,7 @@ lerna-debug.log*
 # Package Managers
 yarn.lock
 pnpm-lock.yaml
+
+# devel db artifacts
+dev.db
+dev.db-journal
