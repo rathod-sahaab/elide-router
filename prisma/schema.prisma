@@ -22,10 +22,7 @@ model User {
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
 
-        organisation UsersOnOrganisations[]
-
-        Organisation   Organisation? @relation(fields: [organisationId], references: [id])
-        organisationId Int?
+        organisations UsersOnOrganisations[]
 }
 
 model Link {
@@ -71,7 +68,6 @@ model Organisation {
 
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
-        User      User[]
 }
 
 enum OrganisationMemberRole {
@@ -81,10 +77,11 @@ enum OrganisationMemberRole {
 }
 
 model UsersOnOrganisations {
-        user           User         @relation(fields: [userId], references: [id])
+        user           User                   @relation(fields: [userId], references: [id])
         userId         Int
-        organisation   Organisation @relation(fields: [organisationId], references: [id])
+        organisation   Organisation           @relation(fields: [organisationId], references: [id])
         organisationId Int
+        role           OrganisationMemberRole @default(VIEWER)
 
         @@id([userId, organisationId])
 }
