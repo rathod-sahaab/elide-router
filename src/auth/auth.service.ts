@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { UserEntity } from 'src/entities/user.entity'
 import { CryptoService } from 'src/services/crypto.service'
 import { UserService } from 'src/services/data/user.service'
 import { UserWithoutPassword } from 'src/utils/types'
@@ -12,12 +13,11 @@ export class AuthService {
 		private readonly cryptoService: CryptoService,
 	) {}
 
-	async validateUser(email: string, password: string): Promise<UserWithoutPassword> {
+	async validateUser(email: string, password: string): Promise<UserEntity> {
 		const user = await this.usersService.user({ email })
 
 		if (user && (await this.cryptoService.verify_password(password, user.password_hash))) {
-			const { password_hash, ...rest } = user
-			return rest
+			return new UserEntity(user)
 		}
 
 		return null
@@ -30,6 +30,15 @@ export class AuthService {
 		}
 	}
 
+	// TODO: remove this after class-validator is fixed
+	async test_get_user(email: string): Promise<UserEntity> {
+		const user = await this.usersService.user({ email })
+		if (!user) {
+			throw new NotFoundException('User with given email not found.')
+		}
+		return new UserEntity(user)
+	}
+
 	async register({
 		email,
 		name,
@@ -38,15 +47,21 @@ export class AuthService {
 		email: string
 		name: string
 		password: string
-	}): Promise<UserWithoutPassword> {
+	}): Promise<UserEntity> {
+		const user = await this.usersService.user({ email })
+
+		if (user) {
+			throw new ForbiddenException('Email already in use.')
+		}
+
 		const passwordHash = await this.cryptoService.hashPassword(password)
 
-		const { password_hash, ...rest } = await this.usersService.createUser({
-			email,
-			name,
-			password_hash: passwordHash,
-		})
-
-		return rest
+		return new UserEntity(
+			await this.usersService.createUser({
+				email,
+				name,
+				password_hash: passwordHash,
+			}),
+		)
 	}
 }
