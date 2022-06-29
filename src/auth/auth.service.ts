@@ -4,6 +4,7 @@ import { UserEntity } from 'src/entities/user.entity'
 import { CryptoService } from 'src/services/crypto.service'
 import { UserService } from 'src/services/data/user.service'
 import { UserWithoutPassword } from 'src/utils/types'
+import { TokenPayload } from './interfaces/token-payload'
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,7 @@ export class AuthService {
 	async validateUser(email: string, password: string): Promise<UserEntity> {
 		const user = await this.usersService.user({ email })
 
-		if (user && (await this.cryptoService.verify_password(password, user.password_hash))) {
+		if (user && (await this.cryptoService.verify_password(password, user.passwordHash))) {
 			return new UserEntity(user)
 		}
 
@@ -27,6 +28,18 @@ export class AuthService {
 		const payload = { email: user.email, sub: user.id }
 		return {
 			accessToken: this.jwtService.sign(payload),
+		}
+	}
+
+	async validateToken(token: string): Promise<boolean> {
+		try {
+			const user = (await this.jwtService.verify(token)) as TokenPayload
+			if (!user) {
+				return false
+			}
+			return true
+		} catch {
+			return false
 		}
 	}
 
@@ -60,7 +73,7 @@ export class AuthService {
 			await this.usersService.createUser({
 				email,
 				name,
-				password_hash: passwordHash,
+				passwordHash,
 			}),
 		)
 	}
