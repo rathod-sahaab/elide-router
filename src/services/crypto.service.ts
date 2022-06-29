@@ -1,21 +1,44 @@
 import { Injectable } from '@nestjs/common'
-import { hash, verify } from 'argon2'
+import { ConfigService } from '@nestjs/config'
+import { hash as argon2hash, verify as argon2verify } from 'argon2'
+import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
+import { RefreshTokenPayload } from 'src/auth/interfaces/token-payload'
 
 @Injectable()
 export class CryptoService {
+	constructor(private readonly configService: ConfigService) {}
 	async hashPassword(password: string): Promise<string | null> {
 		try {
-			return await hash(password)
+			return await argon2hash(password)
 		} catch (error) {
 			return null
 		}
 	}
 
-	async verify_password(password: string, hash: string): Promise<boolean> {
+	async verifyPassword(password: string, hash: string): Promise<boolean> {
 		try {
-			return await verify(hash, password)
+			return await argon2verify(hash, password)
 		} catch (error) {
 			return false
+		}
+	}
+
+	signRefreshToken(data: any): string | null {
+		const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET')
+		const validity = this.configService.get('JWT_REFRESH_TOKEN_VALIDITY')
+		try {
+			return jwtSign(data, secret, { expiresIn: validity })
+		} catch (error) {
+			return null
+		}
+	}
+
+	verifyRefreshToken(token: string): RefreshTokenPayload | null {
+		const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET')
+		try {
+			return jwtVerify(token, secret) as RefreshTokenPayload
+		} catch (error) {
+			return null
 		}
 	}
 }

@@ -1,4 +1,9 @@
 export class TokenPayload {
-	public id: string
+	public sub: number
 	public email: string
+}
+
+export class RefreshTokenPayload {
+	public tokenId: string
+	public accessTokenPayload: TokenPayload
 }

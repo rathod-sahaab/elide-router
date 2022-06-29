@@ -2,6 +2,7 @@ import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/com
 import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt'
+import { CryptoService } from 'src/services/crypto.service'
 import { UserService } from 'src/services/data/user.service'
 import { AuthService } from '../auth.service'
 
@@ -50,17 +51,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 			if (!refreshToken) {
 				throw new UnauthorizedException('Refresh token absent')
 			}
-			const isValidRefreshToken = await this.authService.validateToken(refreshToken)
-			if (!isValidRefreshToken) {
-				throw new UnauthorizedException('Refresh token invalid')
-			}
-
-			const user = await this.userService.getByRefreshToken(refreshToken)
+			const refreshTokenPayload = await this.authService.validateRefreshToken(refreshToken)
 
 			const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-				this.authService.createTokens(user)
-
-			await this.userService.updateRefreshToken(user.id, newRefreshToken)
+				await this.authService.createTokens(refreshTokenPayload)
 
 			// ovewrite current cookie to not fail later
 			request.cookies[accessTokenCookieName] = newAccessToken
