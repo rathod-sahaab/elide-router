@@ -5,6 +5,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { RefreshToken } from '@prisma/client'
 import { UserEntity } from 'src/entities/user.entity'
 import { CryptoService } from 'src/services/crypto.service'
 import { RefreshTokenService } from 'src/services/data/refresh-token.service'
@@ -92,13 +93,10 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	// TODO: remove this after class-validator is fixed
-	async test_get_user(email: string): Promise<UserEntity> {
-		const user = await this.usersService.user({ email })
-		if (!user) {
-			throw new NotFoundException('User with given email not found.')
-		}
-		return new UserEntity(user)
+	deleteRefreshToken(token: string): Promise<RefreshToken> {
+		// ignoring expiration because we are deleting it anyway
+		const payload = this.cryptoService.verifyRefreshToken(token, false)
+		return this.refreshTokenService.deleteRefreshToken({ id: payload.tokenId })
 	}
 
 	async register({

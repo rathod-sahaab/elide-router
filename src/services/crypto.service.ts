@@ -33,10 +33,16 @@ export class CryptoService {
 		}
 	}
 
-	verifyRefreshToken(token: string): RefreshTokenPayload | null {
+	/**
+	 * Ver
+	 * @param token - Refresh token
+	 * @param ignoreExpiration - false by default, true incase we are invalidating it and not using it to authorize user
+	 * @returns {RefreshTokenPayload}
+	 */
+	verifyRefreshToken(token: string, ignoreExpiration: boolean = false): RefreshTokenPayload {
 		const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET')
 		try {
-			return jwtVerify(token, secret) as RefreshTokenPayload
+			return jwtVerify(token, secret, { ignoreExpiration }) as RefreshTokenPayload
 		} catch (error) {
 			return null
 		}

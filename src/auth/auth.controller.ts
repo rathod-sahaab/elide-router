@@ -1,12 +1,12 @@
 import { CookieSerializeOptions } from '@fastify/cookie'
-import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { UserEntity } from 'src/entities/user.entity'
 import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
-import { FastifyReply } from './interfaces/fastify'
+import { FastifyReply, FastifyRequest } from './interfaces/fastify'
 
 @Controller('auth')
 export class AuthController {
@@ -41,13 +41,20 @@ export class AuthController {
 
 	@Get('profile')
 	@UseGuards(JwtAuthGuard)
-	async profile(@Req() req: any) {
-		return await req.user
+	async profile(@Req() req: FastifyRequest) {
+		return req.user
 	}
 
-	// TODO: remove once class transformers are fixed
-	@Get('email/:email')
-	async test_get_user(@Param('email') email: string): Promise<UserEntity> {
-		return await this.authService.test_get_user(email)
+	// TODO: make this RefreshToken only route, can't be accessed with just a accessToken
+	@Delete('logout')
+	@UseGuards(JwtAuthGuard)
+	async logout(@Res() res: FastifyReply) {
+		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
+		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+		await this.authService.deleteRefreshToken(res.cookie[refreshTokenCookieName])
+
+		res.clearCookie(accessTokenCookieName).clearCookie(refreshTokenCookieName).status(200).send({
+			message: 'Logout successful',
+		})
 	}
 }
