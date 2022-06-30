@@ -9,21 +9,34 @@ import { ConfigService } from '@nestjs/config'
 import { PrismaService } from 'src/services/data/prisma.service'
 import { CryptoService } from 'src/services/crypto.service'
 import { JwtStrategy } from './strategies/jwt.strategy'
+import { RefreshTokenService } from 'src/services/data/refresh-token.service'
 
 @Module({
 	imports: [
 		PassportModule,
 		JwtModule.registerAsync({
-			useFactory: async (config: ConfigService) => ({
-				secret: config.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-				signOptions: {
-					expiresIn: config.get<string>('JWT_ACCESS_TOKEN_EXPIRES_IN'),
-				},
-			}),
+			useFactory: async (config: ConfigService) => {
+				console.log(config.get('JWT_ACCESS_TOKEN_SECRET'))
+				console.log(config.get('JWT_ACCESS_TOKEN_VALIDITY'))
+				return {
+					secret: config.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+					signOptions: {
+						expiresIn: config.get<string>('JWT_ACCESS_TOKEN_VALIDITY'),
+					},
+				}
+			},
 			inject: [ConfigService],
 		}),
 	],
-	providers: [AuthService, UserService, PrismaService, CryptoService, LocalStrategy, JwtStrategy],
+	providers: [
+		AuthService,
+		UserService,
+		RefreshTokenService,
+		PrismaService,
+		CryptoService,
+		LocalStrategy,
+		JwtStrategy,
+	],
 	controllers: [AuthController],
 })
 export class AuthModule {}

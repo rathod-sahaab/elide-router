@@ -17,4 +17,10 @@ export class RefreshTokenService {
 	): Promise<RefreshToken> {
 		return this.prisma.refreshToken.findUnique({ where: refreshTokenWhereUniqueInput })
 	}
+
+	async createRefreshToken(
+		refreshTokenCreateInput: Prisma.RefreshTokenCreateInput,
+	): Promise<RefreshToken> {
+		return this.prisma.refreshToken.create({ data: refreshTokenCreateInput })
+	}
 }

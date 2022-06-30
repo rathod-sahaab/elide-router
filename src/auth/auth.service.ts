@@ -30,10 +30,22 @@ export class AuthService {
 		return null
 	}
 
-	async login(user: { email: string; id: number }): Promise<{ accessToken: string }> {
-		const payload = { email: user.email, sub: user.id }
+	async login(user: {
+		email: string
+		id: number
+	}): Promise<{ accessToken: string; refreshToken: string }> {
+		const accessTokenPayload: TokenPayload = { email: user.email, sub: user.id }
+		const refreshTokenDB = await this.refreshTokenService.createRefreshToken({
+			user: { connect: { id: user.id } },
+		})
+
+		const refreshTokenPayload: RefreshTokenPayload = {
+			tokenId: refreshTokenDB.id,
+			accessTokenPayload,
+		}
 		return {
-			accessToken: this.jwtService.sign(payload),
+			accessToken: this.jwtService.sign(accessTokenPayload),
+			refreshToken: this.cryptoService.signRefreshToken(refreshTokenPayload),
 		}
 	}
 

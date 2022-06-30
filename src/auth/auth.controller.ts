@@ -1,18 +1,37 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common'
+import { CookieSerializeOptions } from '@fastify/cookie'
+import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { UserEntity } from 'src/entities/user.entity'
 import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
+import { FastifyReply } from './interfaces/fastify'
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(private authService: AuthService, private configService: ConfigService) {}
 
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
-	async login(@Req() req: any) {
-		return this.authService.login(req.user)
+	async login(@Req() req: any, @Res() res: FastifyReply) {
+		const { accessToken, refreshToken } = await this.authService.login(req.user)
+
+		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
+		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+
+		console.log(accessTokenCookieName, refreshTokenCookieName)
+
+		const cookieOptions: CookieSerializeOptions = {
+			httpOnly: true,
+		}
+
+		res.setCookie(accessTokenCookieName, accessToken, cookieOptions)
+			.setCookie(refreshTokenCookieName, refreshToken, cookieOptions)
+			.status(200)
+			.send({
+				message: 'Login successful',
+			})
 	}
 
 	@Post('register')
