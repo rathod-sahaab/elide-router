@@ -74,3 +74,5 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 		return user
 	}
 }
+
+export class RefreshAuthGuard extends AuthGuard('REFRESH') {}

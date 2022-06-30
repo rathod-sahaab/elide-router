@@ -1,9 +1,9 @@
 import { Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { FastifyRequest } from '../interfaces/fastify'
-import { TokenPayload } from '../interfaces/token-payload'
+import { RefreshTokenPayload, TokenPayload } from '../interfaces/token-payload'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,5 +19,27 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	async validate(user: TokenPayload) {
 		return user
+	}
+}
+
+@Injectable()
+export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'REFRESH') {
+	constructor(configService: ConfigService) {
+		const refreshTokenCookieName = configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME')
+		const refreshTokenSecret = configService.get<string>('JWT_REFRESH_TOKEN_SECRET')
+		super({
+			jwtFromRequest: (req: FastifyRequest) => {
+				if (!req.cookies[refreshTokenCookieName]) {
+					throw new UnauthorizedException()
+				}
+				return req.cookies[refreshTokenCookieName] ?? null
+			},
+			ignoreExpiration: true,
+			secretOrKey: refreshTokenSecret,
+		})
+	}
+
+	validate(refreshTokenPayload: RefreshTokenPayload) {
+		return refreshTokenPayload
 	}
 }

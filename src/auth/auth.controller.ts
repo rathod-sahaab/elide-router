@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import { UserEntity } from 'src/entities/user.entity'
 import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
-import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
 import { FastifyReply, FastifyRequest } from './interfaces/fastify'
 
@@ -47,7 +47,7 @@ export class AuthController {
 
 	// TODO: make this RefreshToken only route, can't be accessed with just a accessToken
 	@Delete('logout')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(RefreshAuthGuard)
 	async logout(@Res() res: FastifyReply) {
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
