@@ -1,9 +1,9 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
-import { Observable } from 'rxjs'
+import { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } from 'src/utils/constants'
 import { AuthService } from '../auth.service'
-import { FastifyRequest } from '../interfaces/fastify'
+import { FastifyReply, FastifyRequest } from '../interfaces/fastify'
 
 export const cookieExtractorCreator = (accessTokenCookieName: string) => {
 	return (request: FastifyRequest): string | null => {
@@ -25,7 +25,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest() as FastifyRequest
-		const response = context.switchToHttp().getResponse()
+		const response = context.switchToHttp().getResponse() as FastifyReply
 
 		const accessTokenCookieName = this.configService.get<string>('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME')
@@ -51,13 +51,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 			request.cookies[accessTokenCookieName] = newAccessToken
 			request.cookies[refreshTokenCookieName] = newRefreshToken
 
-			response.cookie(accessTokenCookieName, newAccessToken, {})
-			response.cookie(refreshTokenCookieName, newRefreshToken, {})
+			response.cookie(accessTokenCookieName, newAccessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
+			response.cookie(refreshTokenCookieName, newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
 
 			return this.activate(context)
 		} catch (err) {
-			response.clearCookie(accessTokenCookieName, {})
-			response.clearCookie(refreshTokenCookieName, {})
+			response.clearCookie(accessTokenCookieName)
+			response.clearCookie(refreshTokenCookieName)
 			return false
 		}
 	}
