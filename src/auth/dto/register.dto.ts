@@ -5,7 +5,7 @@ export class RegisterBody {
 	email: string
 
 	@IsString()
-	@MinLength(9)
+	@MinLength(6)
 	password: string
 
 	@IsString()
