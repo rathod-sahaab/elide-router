@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from './prisma.service'
-import { User, Prisma } from '@prisma/client'
+import { User, Prisma, UsersOnOrganisations, OrganisationMemberRole } from '@prisma/client'
 
 @Injectable()
 export class UserRepository {
@@ -50,5 +50,81 @@ export class UserRepository {
 		return this.prisma.user.delete({
 			where,
 		})
+	}
+
+	async userCanCreateLinkInProject({
+		userId,
+		projectId,
+	}: {
+		userId: number
+		projectId: number
+	}): Promise<boolean> {
+		const project = await this.prisma.project.findUnique({
+			where: {
+				id: projectId,
+			},
+		})
+
+		if (!project) {
+			throw new NotFoundException(`Project with id ${projectId} not found`)
+		}
+
+		if (project.ownerId === userId) {
+			return true
+		}
+
+		if (!project.organisationId) {
+			return false
+		}
+
+		// project is part of an organisation where the user is a maker or an admin
+		const orgRelation = await this.prisma.usersOnOrganisations.findUnique({
+			where: {
+				userId_organisationId: {
+					userId: userId,
+					organisationId: project.organisationId,
+				},
+			},
+		})
+
+		if (!orgRelation) {
+			return false
+		}
+
+		// can add more roles so explicit inclusion is better than implicit inclusion
+		if (
+			orgRelation.role === OrganisationMemberRole.MAKER ||
+			orgRelation.role === OrganisationMemberRole.ADMIN
+		) {
+			return true
+		}
+
+		return false
+	}
+
+	async userCanCreateLinkInOrganisation({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}): Promise<boolean> {
+		const orgRelation = await this.prisma.usersOnOrganisations.findUnique({
+			where: {
+				userId_organisationId: {
+					userId: userId,
+					organisationId: organisationId,
+				},
+			},
+		})
+
+		if (!orgRelation) {
+			return false
+		}
+
+		return (
+			orgRelation.role == OrganisationMemberRole.MAKER ||
+			orgRelation.role === OrganisationMemberRole.ADMIN
+		)
 	}
 }
