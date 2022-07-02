@@ -13,9 +13,9 @@ export class CreateLinkInputBody {
 
 	@IsOptional()
 	@Min(1)
-	projectId: number
+	projectId?: number
 
 	@IsOptional()
 	@Min(1)
-	organisationId: number
+	organisationId?: number
 }
