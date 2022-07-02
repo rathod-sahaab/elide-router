@@ -6,6 +6,15 @@ import { PrismaService } from './prisma.service'
 @Injectable()
 export class LinkRepository {
 	constructor(private readonly prisma: PrismaService) {}
+
+	async link({ id }: { id: number }) {
+		return this.prisma.link.findUnique({
+			where: {
+				id,
+			},
+		})
+	}
+
 	/**
 	Get all links of user which are not part of an organisation or a project
 	*/
@@ -91,6 +100,14 @@ export class LinkRepository {
 	async createLink(data: Prisma.LinkCreateInput) {
 		return this.prisma.link.create({
 			data,
+		})
+	}
+
+	async deleteLink({ id }: { id: number }) {
+		return this.prisma.link.delete({
+			where: {
+				id,
+			},
 		})
 	}
 }

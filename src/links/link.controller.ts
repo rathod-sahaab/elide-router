@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 import { FastifyRequest } from 'src/auth/interfaces/fastify'
 import { PaginationQuery } from 'src/commons/dto/pagination.dto'
 import { HelperService } from 'src/services/helper.service'
 import { CreateLinkInputBody } from './dto/create-link.dto'
+import { DeleteLinkParams } from './dto/delete-link.dto'
 import { LinkService } from './link.service'
 
 @Controller('links')
@@ -35,5 +36,21 @@ export class LinkController {
 		@Req() { user }: FastifyRequest,
 		@Body() { slug, url, description, projectId, organisationId }: CreateLinkInputBody,
 	) {
+		return this.linkService.createLink({
+			creatorId: user.sub,
+			slug,
+			url,
+			description,
+			projectId,
+			organisationId,
+		})
+	}
+
+	@Delete(':linkId')
+	async deleteLink(@Req() { user }: FastifyRequest, @Param() { linkId }: DeleteLinkParams) {
+		return this.linkService.deleteLink({
+			userId: user.sub,
+			id: linkId,
+		})
 	}
 }
