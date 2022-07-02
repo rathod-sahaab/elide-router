@@ -4,6 +4,7 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { CONFIG_VALIDATION_SCHEMA } from './utils/config-validation-schema'
+import { LinksModule } from './links/links.module';
 
 @Module({
 	imports: [
@@ -14,6 +15,7 @@ import { CONFIG_VALIDATION_SCHEMA } from './utils/config-validation-schema'
 			cache: true,
 			validationSchema: CONFIG_VALIDATION_SCHEMA,
 		}),
+		LinksModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
