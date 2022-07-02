@@ -1,28 +1,23 @@
-import {
-	ForbiddenException,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
-} from '@nestjs/common'
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { RefreshToken } from '@prisma/client'
 import { UserEntity } from 'src/entities/user.entity'
 import { CryptoService } from 'src/services/crypto.service'
-import { RefreshTokenService } from 'src/services/data/refresh-token.service'
-import { UserService } from 'src/services/data/user.service'
+import { RefreshTokenRepository } from 'src/services/data/refresh-token.repository'
+import { UserRepository } from 'src/services/data/user.repository'
 import { RefreshTokenPayload, TokenPayload } from './interfaces/token-payload'
 
 @Injectable()
 export class AuthService {
 	constructor(
-		private readonly usersService: UserService,
-		private readonly refreshTokenService: RefreshTokenService,
+		private readonly userRepository: UserRepository,
+		private readonly refreshRepository: RefreshTokenRepository,
 		private readonly jwtService: JwtService,
 		private readonly cryptoService: CryptoService,
 	) {}
 
 	async validateUser(email: string, password: string): Promise<UserEntity> {
-		const user = await this.usersService.user({ email })
+		const user = await this.userRepository.user({ email })
 
 		if (user && (await this.cryptoService.verifyPassword(password, user.passwordHash))) {
 			return new UserEntity(user)
@@ -36,7 +31,7 @@ export class AuthService {
 		id: number
 	}): Promise<{ accessToken: string; refreshToken: string }> {
 		const accessTokenPayload: TokenPayload = { email: user.email, sub: user.id }
-		const refreshTokenDB = await this.refreshTokenService.createRefreshToken({
+		const refreshTokenDB = await this.refreshRepository.createRefreshToken({
 			user: { connect: { id: user.id } },
 		})
 
@@ -68,7 +63,7 @@ export class AuthService {
 			throw new UnauthorizedException('Invalid refresh token.')
 		}
 
-		const refreshToken = await this.refreshTokenService.refreshToken({ id: payload.tokenId })
+		const refreshToken = await this.refreshRepository.refreshToken({ id: payload.tokenId })
 
 		if (!refreshToken || !refreshToken.isActive) {
 			throw new UnauthorizedException('Invalid refresh token.')
@@ -96,7 +91,7 @@ export class AuthService {
 	deleteRefreshToken(token: string): Promise<RefreshToken> {
 		// ignoring expiration because we are deleting it anyway
 		const payload = this.cryptoService.verifyRefreshToken(token, false)
-		return this.refreshTokenService.deleteRefreshToken({ id: payload.tokenId })
+		return this.refreshRepository.deleteRefreshToken({ id: payload.tokenId })
 	}
 
 	async register({
@@ -108,7 +103,7 @@ export class AuthService {
 		name: string
 		password: string
 	}): Promise<UserEntity> {
-		const user = await this.usersService.user({ email })
+		const user = await this.userRepository.user({ email })
 
 		if (user) {
 			throw new ForbiddenException('Email already in use.')
@@ -117,7 +112,7 @@ export class AuthService {
 		const passwordHash = await this.cryptoService.hashPassword(password)
 
 		return new UserEntity(
-			await this.usersService.createUser({
+			await this.userRepository.createUser({
 				email,
 				name,
 				passwordHash,

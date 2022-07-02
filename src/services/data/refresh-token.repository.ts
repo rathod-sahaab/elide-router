@@ -5,12 +5,8 @@ import { Prisma, RefreshToken } from '@prisma/client'
 import { PrismaService } from './prisma.service'
 
 @Injectable()
-export class RefreshTokenService {
-	constructor(
-		// private readonly configService: ConfigService,
-		// private readonly jwtService: JwtService,
-		private readonly prisma: PrismaService,
-	) {}
+export class RefreshTokenRepository {
+	constructor(private readonly prisma: PrismaService) {}
 
 	refreshToken(
 		refreshTokenWhereUniqueInput: Prisma.RefreshTokenWhereUniqueInput,

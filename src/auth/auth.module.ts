@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
-import { UserService } from 'src/services/data/user.service'
+import { UserRepository } from 'src/services/data/user.repository'
 import { AuthService } from './auth.service'
 import { LocalStrategy } from './strategies/local.strategy'
 import { AuthController } from './auth.controller'
@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config'
 import { PrismaService } from 'src/services/data/prisma.service'
 import { CryptoService } from 'src/services/crypto.service'
 import { JwtStrategy } from './strategies/jwt.strategy'
-import { RefreshTokenService } from 'src/services/data/refresh-token.service'
+import { RefreshTokenRepository } from 'src/services/data/refresh-token.repository'
 
 @Module({
 	imports: [
@@ -30,8 +30,8 @@ import { RefreshTokenService } from 'src/services/data/refresh-token.service'
 	],
 	providers: [
 		AuthService,
-		UserService,
-		RefreshTokenService,
+		UserRepository,
+		RefreshTokenRepository,
 		PrismaService,
 		CryptoService,
 		LocalStrategy,
