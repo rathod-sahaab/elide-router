@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common'
-import { JwtAuthGuard } from 'src/app/auth/guards/jwt-auth.guard'
+import { JwtAuthGuard } from 'src/api/auth/guards/jwt-auth.guard'
 import { FastifyRequest } from 'src/commons/types/fastify.d'
 import { PaginationQuery } from 'src/commons/dto/pagination.dto'
 import { HelperService } from 'src/utils/helper.service'
