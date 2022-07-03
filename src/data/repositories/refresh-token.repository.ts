@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common'
-// import { ConfigService } from '@nestjs/config'
-// import { JwtService } from '@nestjs/jwt'
 import { Prisma, RefreshToken } from '@prisma/client'
 import { PrismaService } from './prisma.service'
 
