@@ -1,12 +1,12 @@
 import { CookieSerializeOptions } from '@fastify/cookie'
-import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post, Req, Res, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { UserEntity } from 'src/entities/user.entity'
+import { UserEntity } from 'src/data/entities/user.entity'
 import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
-import { FastifyReply, FastifyRequest } from './interfaces/fastify'
+import { FastifyReply, FastifyRequest } from '../../commons/types/fastify'
 
 @Controller('auth')
 export class AuthController {

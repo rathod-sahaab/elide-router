@@ -1,8 +1,8 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
-import { LinkRepository } from 'src/services/data/link.repository'
-import { UserRepository } from 'src/services/data/user.repository'
+import { LinkRepository } from 'src/data/repositories/link.repository'
+import { UserRepository } from 'src/data/repositories/user.repository'
 
 @Injectable()
 export class LinkService {

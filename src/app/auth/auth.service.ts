@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { RefreshToken } from '@prisma/client'
-import { UserEntity } from 'src/entities/user.entity'
-import { CryptoService } from 'src/services/crypto.service'
-import { RefreshTokenRepository } from 'src/services/data/refresh-token.repository'
-import { UserRepository } from 'src/services/data/user.repository'
-import { RefreshTokenPayload, TokenPayload } from './interfaces/token-payload'
+import { UserEntity } from 'src/data/entities/user.entity'
+import { CryptoService } from 'src/utils/crypto.service'
+import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repository'
+import { UserRepository } from 'src/data/repositories/user.repository'
+import { RefreshTokenPayload, TokenPayload } from '../../commons/types/token-payload'
 
 @Injectable()
 export class AuthService {

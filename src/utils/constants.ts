@@ -1,5 +1,6 @@
 import { CookieSerializeOptions } from '@fastify/cookie'
 import ms from 'ms'
+import Joi from 'joi'
 
 const dateInFuture = (duration: string) => new Date(Date.now() + ms(duration))
 
@@ -12,3 +13,12 @@ export const REFRESH_TOKEN_COOKIE_OPTIONS: CookieSerializeOptions = {
 	httpOnly: true,
 	expires: dateInFuture('7d'),
 }
+
+export const CONFIG_VALIDATION_SCHEMA = Joi.object({
+	NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
+	PORT: Joi.number().default(3000),
+	JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+	JWT_ACCESS_TOKEN_VALIDITY: Joi.string().required(),
+	JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+	JWT_REFRESH_TOKEN_VALIDITY: Joi.string().required(),
+})

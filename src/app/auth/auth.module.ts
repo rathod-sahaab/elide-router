@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
-import { UserRepository } from 'src/services/data/user.repository'
+import { UserRepository } from 'src/data/repositories/user.repository'
 import { AuthService } from './auth.service'
 import { LocalStrategy } from './strategies/local.strategy'
 import { AuthController } from './auth.controller'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { PrismaService } from 'src/services/data/prisma.service'
-import { CryptoService } from 'src/services/crypto.service'
+import { PrismaService } from 'src/data/repositories/prisma.service'
+import { CryptoService } from 'src/utils/crypto.service'
 import { JwtStrategy } from './strategies/jwt.strategy'
-import { RefreshTokenRepository } from 'src/services/data/refresh-token.repository'
+import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repository'
 
 @Module({
 	imports: [

@@ -2,8 +2,8 @@ import { Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { FastifyRequest } from '../interfaces/fastify'
-import { RefreshTokenPayload, TokenPayload } from '../interfaces/token-payload'
+import { FastifyRequest } from '../../../commons/types/fastify'
+import { RefreshTokenPayload, TokenPayload } from '../../../commons/types/token-payload'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } from 'src/utils/constants'
 import { AuthService } from '../auth.service'
-import { FastifyReply, FastifyRequest } from '../interfaces/fastify'
+import { FastifyReply, FastifyRequest } from '../../../commons/types/fastify'
 
 export const cookieExtractorCreator = (accessTokenCookieName: string) => {
 	return (request: FastifyRequest): string | null => {

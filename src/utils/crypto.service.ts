@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { hash as argon2hash, verify as argon2verify } from 'argon2'
 import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
-import { RefreshTokenPayload } from 'src/auth/interfaces/token-payload'
+import { RefreshTokenPayload } from 'src/commons/types/token-payload'
 
 @Injectable()
 export class CryptoService {
