@@ -5,8 +5,8 @@
       -  [x] logout
       -  [] fogot-password
    -  user
-      -  [] profile
-      -  [] change-password
+      -  [x] profile
+      -  [x] change-password
       -  [] DELETE /sessions
       -  [] DELETE /sessions/{sessionId}
    -  link
