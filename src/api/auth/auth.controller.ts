@@ -57,4 +57,15 @@ export class AuthController {
 			message: 'Logout successful',
 		})
 	}
+
+	@Delete('sessions')
+	async deleteSessions(
+		@Req() { user }: FastifyRequest,
+		@Body() { password }: { password: string },
+	) {
+		return this.authService.deleteSessions({ userId: user.sub, password })
+	}
+
+	// @Delete('session/:sessionId')
+	// async deleteSession(@Req() { user }: FastifyRequest, @Param('sessionId') sessionId: string) {}
 }

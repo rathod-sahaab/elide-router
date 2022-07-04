@@ -3,12 +3,12 @@
       -  [x] login
       -  [x] register
       -  [x] logout
-      -  [] fogot-password
+      -  [] forgot-password
+      -  [x] DELETE /sessions
+      -  [] DELETE /sessions/{sessionId}
    -  user
       -  [x] profile
       -  [x] change-password
-      -  [] DELETE /sessions
-      -  [] DELETE /sessions/{sessionId}
    -  link
       -  [] /
          -  [x] /

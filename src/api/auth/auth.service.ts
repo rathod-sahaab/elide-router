@@ -119,4 +119,18 @@ export class AuthService {
 			}),
 		)
 	}
+
+	async deleteSessions({ userId, password }: { userId: number; password: string }) {
+		const user = await this.userRepository.user({ id: userId })
+
+		if (!this.cryptoService.verifyPassword(password, user.passwordHash)) {
+			throw new UnauthorizedException('Invalid password')
+		}
+
+		await this.refreshRepository.deleteRefreshTokens({ userId })
+
+		return {
+			message: 'Sessions deleted successfully',
+		}
+	}
 }

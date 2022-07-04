@@ -23,4 +23,8 @@ export class RefreshTokenRepository {
 	): Promise<RefreshToken> {
 		return this.prisma.refreshToken.delete({ where: refreshTokenWhereUniqueInput })
 	}
+
+	deleteRefreshTokens(refreshTokenWhereInput: Prisma.RefreshTokenWhereInput) {
+		return this.prisma.refreshToken.deleteMany({ where: refreshTokenWhereInput })
+	}
 }
