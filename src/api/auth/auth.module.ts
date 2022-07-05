@@ -38,5 +38,6 @@ import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repo
 		JwtStrategy,
 	],
 	controllers: [AuthController],
+	exports: [AuthService],
 })
 export class AuthModule {}

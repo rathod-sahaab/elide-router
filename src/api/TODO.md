@@ -4,11 +4,11 @@
       -  [x] register
       -  [x] logout
       -  [] forgot-password
-      -  [x] DELETE /sessions
-      -  [] DELETE /sessions/{sessionId}
    -  user
       -  [x] profile
       -  [x] change-password
+      -  [x] DELETE /sessions
+      -  [] DELETE /sessions/{sessionId}
    -  link
       -  [] /
          -  [x] /

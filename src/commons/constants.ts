@@ -1,6 +1,7 @@
 import { CookieSerializeOptions } from '@fastify/cookie'
-import ms from 'ms'
-import Joi from 'joi'
+
+const ms = require('ms')
+import * as Joi from 'joi'
 
 const dateInFuture = (duration: string) => new Date(Date.now() + ms(duration))
 

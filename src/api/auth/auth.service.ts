@@ -10,10 +10,10 @@ import { RefreshTokenPayload, TokenPayload } from '../../commons/types/token-pay
 @Injectable()
 export class AuthService {
 	constructor(
-		private readonly userRepository: UserRepository,
-		private readonly refreshRepository: RefreshTokenRepository,
-		private readonly jwtService: JwtService,
 		private readonly cryptoService: CryptoService,
+		private readonly jwtService: JwtService,
+		private readonly refreshRepository: RefreshTokenRepository,
+		private readonly userRepository: UserRepository,
 	) {}
 
 	async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -118,19 +118,5 @@ export class AuthService {
 				passwordHash,
 			}),
 		)
-	}
-
-	async deleteSessions({ userId, password }: { userId: number; password: string }) {
-		const user = await this.userRepository.user({ id: userId })
-
-		if (!this.cryptoService.verifyPassword(password, user.passwordHash)) {
-			throw new UnauthorizedException('Invalid password')
-		}
-
-		await this.refreshRepository.deleteRefreshTokens({ userId })
-
-		return {
-			message: 'Sessions deleted successfully',
-		}
 	}
 }

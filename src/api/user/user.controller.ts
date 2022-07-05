@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post, Req, UseGuards } from '@nestjs/common'
 import { FastifyRequest } from 'src/commons/types/fastify'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { ChangePasswordDto } from './dto/change-password.dto'
@@ -21,4 +21,15 @@ export class UserController {
 	) {
 		return this.userService.changePassword({ userId: user.sub, password, newPassword })
 	}
+
+	@Delete('sessions')
+	async deleteSessions(
+		@Req() { user }: FastifyRequest,
+		@Body() { password }: { password: string },
+	) {
+		return this.userService.deleteSessions({ userId: user.sub, password })
+	}
+
+	// @Delete('session/:sessionId')
+	// async deleteSession(@Req() { user }: FastifyRequest, @Param('sessionId') sessionId: string) {}
 }
