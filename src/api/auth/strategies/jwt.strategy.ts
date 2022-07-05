@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'REFRESH') {
-	constructor(configService: ConfigService) {
+	constructor(readonly configService: ConfigService) {
 		const refreshTokenCookieName = configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME')
 		const refreshTokenSecret = configService.get<string>('JWT_REFRESH_TOKEN_SECRET')
 		super({
