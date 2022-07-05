@@ -8,7 +8,7 @@
       -  [x] profile
       -  [x] change-password
       -  [x] DELETE /sessions
-      -  [] DELETE /sessions/{sessionId}
+      -  [x] DELETE /sessions/{sessionId}
    -  link
       -  [] /
          -  [x] /
