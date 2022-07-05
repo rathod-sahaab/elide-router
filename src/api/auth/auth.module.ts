@@ -16,8 +16,6 @@ import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repo
 		PassportModule,
 		JwtModule.registerAsync({
 			useFactory: async (config: ConfigService) => {
-				console.log(config.get('JWT_ACCESS_TOKEN_SECRET'))
-				console.log(config.get('JWT_ACCESS_TOKEN_VALIDITY'))
 				return {
 					secret: config.get<string>('JWT_ACCESS_TOKEN_SECRET'),
 					signOptions: {

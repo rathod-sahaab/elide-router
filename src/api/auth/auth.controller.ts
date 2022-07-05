@@ -20,8 +20,6 @@ export class AuthController {
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
-		console.log(accessTokenCookieName, refreshTokenCookieName)
-
 		const cookieOptions: CookieSerializeOptions = {
 			httpOnly: true,
 		}
