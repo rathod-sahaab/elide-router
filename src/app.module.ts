@@ -7,6 +7,7 @@ import { CONFIG_VALIDATION_SCHEMA } from './commons/constants'
 import { LinkModule } from './api/link/link.module'
 import { UserModule } from './api/user/user.module'
 import { OrganisationModule } from './api/organisation/organisation.module'
+import { ProjectModule } from './api/project/project.module';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { OrganisationModule } from './api/organisation/organisation.module'
 		LinkModule,
 		UserModule,
 		OrganisationModule,
+		ProjectModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
