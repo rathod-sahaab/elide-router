@@ -4,7 +4,7 @@ import { FastifyRequest } from 'src/commons/types/fastify'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { ProjectService } from './project.service'
 
-@Controller('project')
+@Controller('projects')
 export class ProjectController {
 	constructor(private readonly projectService: ProjectService) {}
 
@@ -12,5 +12,14 @@ export class ProjectController {
 	@UseGuards(JwtAuthGuard)
 	getAllProjects(@Req() { user }: FastifyRequest, @Param() { page, limit }: PaginationQuery) {
 		this.projectService.getAllProjects({ userId: user.sub, page, limit })
+	}
+
+	@Get(':id/links')
+	@UseGuards(JwtAuthGuard)
+	getProjectLinks(
+		@Req() { user }: FastifyRequest,
+		@Param() { id, page, limit }: { id: number } & PaginationQuery,
+	) {
+		this.projectService.getProjectLinks({ userId: user.sub, projectId: id, limit, page })
 	}
 }
