@@ -17,7 +17,7 @@
    -  project
       -  [x] /
       -  [x] /{id}/links
-      -  [] POST /
+      -  [x] POST /
    -  organisations
       -  [] /
       -  [] /{id}
