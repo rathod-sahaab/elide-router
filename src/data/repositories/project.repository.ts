@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { PrismaService } from './prisma.service'
 
@@ -59,6 +60,27 @@ export class ProjectRepository {
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',
+			},
+		})
+	}
+
+	async createProject({
+		creatorId,
+		organisationId,
+		description,
+		name,
+	}: {
+		creatorId: number
+		organisationId?: number
+		name: string
+		description?: string
+	}) {
+		return this.prisma.project.create({
+			data: {
+				ownerId: creatorId,
+				name,
+				description,
+				organisationId,
 			},
 		})
 	}

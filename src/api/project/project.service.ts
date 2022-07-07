@@ -21,4 +21,23 @@ export class ProjectService {
 		}
 		return this.projectRepository.getProjectLinks({ projectId, page, limit })
 	}
+
+	createLink({
+		creatorId,
+		organisationId,
+		description,
+		name,
+	}: {
+		creatorId: number
+		organisationId?: number
+		name: string
+		description?: string
+	}) {
+		return this.projectRepository.createProject({
+			creatorId,
+			organisationId,
+			description,
+			name,
+		})
+	}
 }

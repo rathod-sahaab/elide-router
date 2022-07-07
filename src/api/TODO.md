@@ -10,10 +10,10 @@
       -  [x] DELETE /sessions
       -  [x] DELETE /sessions/{sessionId}
    -  link
-      -  [] /
-         -  [x] /
+      -  [x] /
       -  [x] POST /
       -  [] /{linkId}
+      -  [x] DELTE /{linkId}
    -  project
       -  [x] /
       -  [x] /{id}/links
