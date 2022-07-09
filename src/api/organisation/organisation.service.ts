@@ -70,4 +70,26 @@ export class OrganisationService {
 			role,
 		})
 	}
+
+	async deleteMember({
+		userId,
+		organisationId,
+		memberId,
+	}: {
+		userId: number
+		organisationId: number
+		memberId: number
+	}) {
+		const toBeMember = await this.userRepository.user({ id: memberId })
+		if (!toBeMember) {
+			throw new NotFoundException('User not found')
+		}
+		if (!(await this.userRepository.canDeleteMembers({ userId, organisationId }))) {
+			throw new UnauthorizedException("You don't have permission to add members")
+		}
+		return this.userOrganisationRepository.deleteMember({
+			organisationId,
+			memberId,
+		})
+	}
 }

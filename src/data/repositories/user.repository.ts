@@ -166,4 +166,9 @@ export class UserRepository {
 
 		return orgRelation.role === OrganisationMemberRole.ADMIN
 	}
+
+	canDeleteMembers({ userId, organisationId }: { userId: number; organisationId: number }) {
+		// TODO: implement delete permission separately
+		return this.canAddMembers({ userId, organisationId })
+	}
 }

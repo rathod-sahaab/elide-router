@@ -24,8 +24,8 @@
       -  [x] /{id}/links
       -  [x] /{id}/projects
       -  [x] POST /
-      -  [] POST /{id}/member
-      -  [] DELETE /{id}/member/{userId}
+      -  [x] POST /{id}/member
+      -  [x] DELETE /{id}/member/{userId}
 
 ## Improvements
 

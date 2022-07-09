@@ -23,4 +23,15 @@ export class UserOrganisationRepository {
 			},
 		})
 	}
+
+	deleteMember({ organisationId, memberId }: { organisationId: number; memberId: number }) {
+		return this.prisma.usersOnOrganisations.delete({
+			where: {
+				userId_organisationId: {
+					organisationId,
+					userId: memberId,
+				},
+			},
+		})
+	}
 }
