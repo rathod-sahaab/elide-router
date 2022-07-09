@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common'
 import { FastifyRequest } from 'src/commons/types/fastify'
+import { AddMemberBody, AddMemberParams } from './dto/add-member.dto'
 import { CreateOrganisationBody } from './dto/create-organisation.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
@@ -31,6 +32,20 @@ export class OrganisationController {
 		return this.organisationService.getOrganisationProjects({
 			userId: user.sub,
 			organisationId: orgId,
+		})
+	}
+
+	@Post(':orgId/member')
+	addMember(
+		@Req() { user }: FastifyRequest,
+		@Param() { orgId }: AddMemberParams,
+		@Body() { memberEmail, role }: AddMemberBody,
+	) {
+		return this.organisationService.addMember({
+			userId: user.sub,
+			organisationId: orgId,
+			memberEmail,
+			role,
 		})
 	}
 }

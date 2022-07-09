@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { PrismaService } from './prisma.service'
 import { User, Prisma, OrganisationMemberRole } from '@prisma/client'
 
@@ -148,5 +148,22 @@ export class UserRepository {
 		}
 
 		return true
+	}
+
+	async canAddMembers({ userId, organisationId }: { userId: number; organisationId: number }) {
+		const orgRelation = await this.prisma.usersOnOrganisations.findUnique({
+			where: {
+				userId_organisationId: {
+					userId,
+					organisationId,
+				},
+			},
+		})
+
+		if (!orgRelation) {
+			return false
+		}
+
+		return orgRelation.role === OrganisationMemberRole.ADMIN
 	}
 }

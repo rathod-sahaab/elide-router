@@ -23,7 +23,8 @@ model User {
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
 
-        organisations UsersOnOrganisations[]
+        organisations          UsersOnOrganisations[]
+        OrganisationInvitation OrganisationInvitation[]
 }
 
 model Link {
@@ -73,8 +74,9 @@ model Organisation {
         users    UsersOnOrganisations[]
 
 
-        createdAt DateTime @default(now())
-        updatedAt DateTime @default(now())
+        createdAt              DateTime                 @default(now())
+        updatedAt              DateTime                 @default(now())
+        OrganisationInvitation OrganisationInvitation[]
 }
 
 enum OrganisationMemberRole {
@@ -100,4 +102,28 @@ model RefreshToken {
         isActive  Boolean  @default(true)
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
+}
+
+enum OrganisationInvitationStatus {
+        PENDING
+        ACCEPTED
+        REJECTED
+}
+
+model OrganisationInvitation {
+        id String @id @default(cuid())
+
+        user   User                   @relation(fields: [userId], references: [id])
+        userId Int
+        role   OrganisationMemberRole @default(VIEWER)
+
+        organisation   Organisation @relation(fields: [organisationId], references: [id])
+        organisationId Int
+
+        status OrganisationInvitationStatus @default(PENDING)
+
+        createdAt DateTime @default(now())
+        updatedAt DateTime @default(now())
+
+        @@unique([userId, organisationId, status])
 }

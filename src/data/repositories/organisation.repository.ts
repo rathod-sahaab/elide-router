@@ -55,10 +55,12 @@ export class OrganisationRepository {
 			},
 		})
 
+		// FIXME: repository should not care about multiple operations
 		if (!organisation) {
 			throw new InternalServerErrorException('Organisation creation failed')
 		}
 
+		// TODO: move to UserOrganisationRepository
 		const orgRelation = this.prisma.usersOnOrganisations.create({
 			data: {
 				userId,
