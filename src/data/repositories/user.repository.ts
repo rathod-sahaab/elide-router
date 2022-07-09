@@ -126,4 +126,27 @@ export class UserRepository {
 			orgRelation.role === OrganisationMemberRole.ADMIN
 		)
 	}
+
+	async userCanViewInOrganisation({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}): Promise<boolean> {
+		const orgRelation = await this.prisma.usersOnOrganisations.findUnique({
+			where: {
+				userId_organisationId: {
+					userId,
+					organisationId,
+				},
+			},
+		})
+
+		if (!orgRelation) {
+			return false
+		}
+
+		return true
+	}
 }

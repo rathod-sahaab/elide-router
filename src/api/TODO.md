@@ -19,11 +19,13 @@
       -  [x] /{id}/links
       -  [x] POST /
    -  organisations
-      -  [] /
+      -  [x] /
       -  [] /{id}
-      -  [] /{id}/links
-      -  [] /{id}/projects
+      -  [x] /{id}/links
+      -  [x] /{id}/projects
       -  [] POST /
+      -  [] POST /{id}/member
+      -  [] DELETE /{id}/member/{userId}
 
 ## Improvements
 
