@@ -23,7 +23,7 @@
       -  [] /{id}
       -  [x] /{id}/links
       -  [x] /{id}/projects
-      -  [] POST /
+      -  [x] POST /
       -  [] POST /{id}/member
       -  [] DELETE /{id}/member/{userId}
 

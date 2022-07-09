@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { OrganisationMemberRole } from '@prisma/client'
 import { PrismaService } from './prisma.service'
 
 @Injectable()
@@ -35,5 +36,42 @@ export class OrganisationRepository {
 				organisationId,
 			},
 		})
+	}
+
+	async createOrganisation({
+		userId,
+		name,
+		description,
+	}: {
+		userId: number
+		name: string
+		description?: string
+	}) {
+		// FIXME: Add transactions
+		const organisation = await this.prisma.organisation.create({
+			data: {
+				name,
+				description,
+			},
+		})
+
+		if (!organisation) {
+			throw new InternalServerErrorException('Organisation creation failed')
+		}
+
+		const orgRelation = this.prisma.usersOnOrganisations.create({
+			data: {
+				userId,
+				organisationId: organisation.id,
+				// Creator is ADMIN
+				role: OrganisationMemberRole.ADMIN,
+			},
+		})
+
+		if (!orgRelation) {
+			throw new InternalServerErrorException('Organisation relation creation failed')
+		}
+
+		return organisation
 	}
 }

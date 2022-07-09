@@ -26,4 +26,12 @@ export class OrganisationService {
 		}
 		return this.organisationRepository.getProjects({ organisationId })
 	}
+
+	createOrganisation({}: { userId: number; name: string; description?: string }) {
+		return this.organisationRepository.createOrganisation({
+			userId,
+			name,
+			description,
+		})
+	}
 }

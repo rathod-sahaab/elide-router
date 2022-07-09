@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Req } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common'
 import { FastifyRequest } from 'src/commons/types/fastify'
+import { CreateOrganisationBody } from './dto/create-organisation.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
 
@@ -10,6 +11,11 @@ export class OrganisationController {
 	@Get()
 	getUserOrganisations(@Req() { user }: FastifyRequest) {
 		return this.organisationService.getUserOrganisations({ userId: user.sub })
+	}
+
+	@Post()
+	createOrganisation(@Req() { user }: FastifyRequest, @Body() body: CreateOrganisationBody) {
+		return this.organisationService.createOrganisation({ userId: user.sub, ...body })
 	}
 
 	@Get(':orgId/links')

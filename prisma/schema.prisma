@@ -49,7 +49,7 @@ model Link {
 }
 
 model Project {
-        id          Int    @id @default(autoincrement())
+        id          Int     @id @default(autoincrement())
         name        String
         description String?
         links       Link[]
@@ -64,8 +64,9 @@ model Project {
 }
 
 model Organisation {
-        id   Int    @id @default(autoincrement())
-        name String
+        id          Int     @id @default(autoincrement())
+        name        String
+        description String?
 
         links    Link[]
         projects Project[]
