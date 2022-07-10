@@ -9,6 +9,9 @@
       -  [x] change-password
       -  [x] DELETE /sessions
       -  [x] DELETE /sessions/{sessionId}
+      -  [x] GET /invitations -- All of user invitations
+      -  [x] DELETE /invitations/{id} -- reject
+      -  [x] PUT /invitations/{id} -- accept
    -  link
       -  [x] /
       -  [x] POST /
@@ -25,7 +28,10 @@
       -  [x] /{id}/projects
       -  [x] POST /
       -  [x] POST /{id}/member
+         -  [] rename to /{id}/invite
       -  [x] DELETE /{id}/member/{userId}
+      -  [] GET /invitations
+      -  [] DELETE /invitations/{id} -- reject
 
 ## Improvements
 

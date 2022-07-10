@@ -6,7 +6,7 @@ import { DeleteMemberParams } from './dto/delete-member.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
 
-@Controller('organisation')
+@Controller('organisations')
 export class OrganisationController {
 	constructor(private readonly organisationService: OrganisationService) {}
 

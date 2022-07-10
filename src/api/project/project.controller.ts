@@ -26,10 +26,10 @@ export class ProjectController {
 	@Post()
 	createProject(
 		@Req() { user }: FastifyRequest,
-		@Body() { creatorId, organisationId, description, name }: CreateProjectBody,
+		@Body() { organisationId, description, name }: CreateProjectBody,
 	) {
 		return this.projectService.createLink({
-			creatorId,
+			creatorId: user.sub,
 			organisationId,
 			description,
 			name,
