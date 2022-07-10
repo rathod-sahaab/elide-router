@@ -27,11 +27,10 @@
       -  [x] /{id}/links
       -  [x] /{id}/projects
       -  [x] POST /
-      -  [x] POST /{id}/member
-         -  [] rename to /{id}/invite
+      -  [x] POST /{id}/invite
       -  [x] DELETE /{id}/member/{userId}
-      -  [] GET /invitations
-      -  [] DELETE /invitations/{id} -- reject
+      -  [x] GET /invitations
+      -  [x] DELETE /invitations/{id} -- cancel
 
 ## Improvements
 

@@ -1,6 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common'
+import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { FastifyRequest } from 'src/commons/types/fastify'
+import { HelperService } from 'src/utils/helper.service'
 import { AddMemberBody, AddMemberParams } from './dto/add-member.dto'
+import { CancelInvitationParams } from './dto/cancel-organsisation-invitation.dto'
 import { CreateOrganisationBody } from './dto/create-organisation.dto'
 import { DeleteMemberParams } from './dto/delete-member.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
@@ -8,7 +11,10 @@ import { OrganisationService } from './organisation.service'
 
 @Controller('organisations')
 export class OrganisationController {
-	constructor(private readonly organisationService: OrganisationService) {}
+	constructor(
+		private readonly organisationService: OrganisationService,
+		private readonly helperService: HelperService,
+	) {}
 
 	@Get()
 	getUserOrganisations(@Req() { user }: FastifyRequest) {
@@ -36,7 +42,7 @@ export class OrganisationController {
 		})
 	}
 
-	@Post(':orgId/member')
+	@Post(':orgId/invite')
 	addMember(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId }: AddMemberParams,
@@ -56,6 +62,39 @@ export class OrganisationController {
 			userId: user.sub,
 			organisationId: orgId,
 			memberId,
+		})
+	}
+
+	@Get(':orgId/invitations')
+	async getOrgInvitations(
+		@Req() { user }: FastifyRequest,
+		@Param() { orgId }: GetOrgLinksParams,
+		@Query() { page, limit }: PaginationArgs,
+	) {
+		const { invitations, count } = await this.organisationService.getOrganisationInvitations({
+			userId: user.sub,
+			organisationId: orgId,
+			page,
+			limit,
+		})
+
+		return this.helperService.formatPaginationResponse({
+			results: invitations,
+			count,
+			page,
+			limit,
+		})
+	}
+
+	@Delete(':orgId/invitation/:invitationId')
+	async cancelOrganisationInvitation(
+		@Req() { user }: FastifyRequest,
+		@Param() { orgId, invitationId }: CancelInvitationParams,
+	) {
+		return this.organisationService.cancelInvitation({
+			userId: user.sub,
+			organisationId: orgId,
+			invitationId,
 		})
 	}
 }

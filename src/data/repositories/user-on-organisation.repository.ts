@@ -34,4 +34,21 @@ export class UserOrganisationRepository {
 			},
 		})
 	}
+
+	async getOrganisationRelation({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}) {
+		return await this.prisma.usersOnOrganisations.findUnique({
+			where: {
+				userId_organisationId: {
+					userId,
+					organisationId,
+				},
+			},
+		})
+	}
 }

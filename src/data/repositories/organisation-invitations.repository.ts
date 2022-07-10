@@ -25,6 +25,13 @@ export class OrganisationInvitationRepository {
 		})
 	}
 
+	cancelInvitation({ id }: { id: string }) {
+		return this.prisma.organisationInvitation.update({
+			where: { id },
+			data: { status: OrganisationInvitationStatus.CANCELED },
+		})
+	}
+
 	async getInvitations({
 		userId,
 		page,
@@ -36,6 +43,32 @@ export class OrganisationInvitationRepository {
 	} & PaginationArgs) {
 		const filter: Prisma.OrganisationInvitationWhereInput = {
 			userId,
+			status,
+		}
+		const invitations = await this.prisma.organisationInvitation.findMany({
+			where: filter,
+			skip: (page - 1) * limit,
+			take: limit,
+		})
+
+		const count = await this.prisma.organisationInvitation.count({
+			where: filter,
+		})
+
+		return { invitations, count }
+	}
+
+	async getInvitationsByOrganisation({
+		organisationId,
+		page,
+		limit,
+		status = OrganisationInvitationStatus.PENDING,
+	}: {
+		organisationId: number
+		status?: OrganisationInvitationStatus
+	} & PaginationArgs) {
+		const filter: Prisma.OrganisationInvitationWhereInput = {
+			organisationId,
 			status,
 		}
 		const invitations = await this.prisma.organisationInvitation.findMany({
