@@ -11,7 +11,6 @@ import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repo
 
 @Module({
 	imports: [
-		PassportModule,
 		JwtModule.registerAsync({
 			useFactory: async (config: ConfigService) => {
 				return {
