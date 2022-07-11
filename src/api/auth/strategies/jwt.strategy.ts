@@ -28,12 +28,7 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'REFRESH') {
 		const refreshTokenCookieName = configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME')
 		const refreshTokenSecret = configService.get<string>('JWT_REFRESH_TOKEN_SECRET')
 		super({
-			jwtFromRequest: (req: FastifyRequest) => {
-				if (!req.cookies[refreshTokenCookieName]) {
-					throw new UnauthorizedException()
-				}
-				return req.cookies[refreshTokenCookieName] ?? null
-			},
+			jwtFromRequest: (req: FastifyRequest) => req.cookies[refreshTokenCookieName] ?? null,
 			ignoreExpiration: true,
 			secretOrKey: refreshTokenSecret,
 		})

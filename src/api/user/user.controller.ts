@@ -17,14 +17,15 @@ import { AcceptInvitationParams } from './dto/accept-invitation.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { DeleteInvitationParams } from './dto/delete-invitation.dto'
 import { DeleteSessionParams } from './dto/delete-session.dto'
+import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { UserService } from './user.service'
 
 @Controller('users')
-@UseGuards(JwtAuthGuard)
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	@Get('profile')
+	@UseGuards(JwtAuthGuard)
 	getProfile(@Req() { user }: FastifyRequest) {
 		return this.userService.getProfile(user.sub)
 	}
@@ -38,10 +39,7 @@ export class UserController {
 	}
 
 	@Delete('sessions')
-	async deleteSessions(
-		@Req() { user }: FastifyRequest,
-		@Body() { password }: { password: string },
-	) {
+	async deleteSessions(@Req() { user }: FastifyRequest, @Body() { password }: DeleteSessionsBody) {
 		return this.userService.deleteSessions({ userId: user.sub, password })
 	}
 

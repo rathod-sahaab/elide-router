@@ -9,7 +9,7 @@ import { LinkService } from './link.service'
 
 @Module({
 	controllers: [LinkController],
-	providers: [LinkService, LinkRepository, UserRepository, PrismaService, HelperService],
+	providers: [LinkService],
 	imports: [AuthModule],
 })
 export class LinkModule {}

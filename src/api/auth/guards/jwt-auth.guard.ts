@@ -31,7 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 		const refreshTokenCookieName = this.configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
 		try {
-			const accessToken = request?.cookies[accessTokenCookieName] ?? null
+			const accessToken = request.cookies[accessTokenCookieName] ?? null
 
 			const isValidAccessToken = await this.authService.validateToken(accessToken)
 			if (isValidAccessToken) {

@@ -6,7 +6,7 @@ import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
-import { FastifyReply, FastifyRequest } from '../../commons/types/fastify'
+import { FastifyReply, FastifyRequest } from 'src/commons/types/fastify'
 
 @Controller('auth')
 export class AuthController {
@@ -46,10 +46,12 @@ export class AuthController {
 	// TODO: make this RefreshToken only route, can't be accessed with just a accessToken
 	@Delete('logout')
 	@UseGuards(RefreshAuthGuard)
-	async logout(@Res() res: FastifyReply) {
+	async logout(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
-		await this.authService.deleteRefreshToken(res.cookie[refreshTokenCookieName])
+
+		console.log
+		await this.authService.deleteRefreshToken(req.cookies[refreshTokenCookieName])
 
 		res.clearCookie(accessTokenCookieName).clearCookie(refreshTokenCookieName).status(200).send({
 			message: 'Logout successful',

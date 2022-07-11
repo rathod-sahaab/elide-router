@@ -6,9 +6,7 @@ import { LocalStrategy } from './strategies/local.strategy'
 import { AuthController } from './auth.controller'
 import { JwtModule } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { PrismaService } from 'src/data/repositories/prisma.service'
-import { CryptoService } from 'src/utils/crypto.service'
-import { JwtStrategy } from './strategies/jwt.strategy'
+import { JwtStrategy, RefreshJwtStrategy } from './strategies/jwt.strategy'
 import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repository'
 
 @Module({
@@ -26,15 +24,7 @@ import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repo
 			inject: [ConfigService],
 		}),
 	],
-	providers: [
-		AuthService,
-		UserRepository,
-		RefreshTokenRepository,
-		PrismaService,
-		CryptoService,
-		LocalStrategy,
-		JwtStrategy,
-	],
+	providers: [AuthService, RefreshTokenRepository, LocalStrategy, JwtStrategy, RefreshJwtStrategy],
 	controllers: [AuthController],
 	exports: [AuthService],
 })

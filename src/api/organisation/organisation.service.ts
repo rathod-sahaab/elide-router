@@ -175,7 +175,7 @@ export class OrganisationService {
 			throw new ForbiddenException("You don't have permission to view invitations")
 		}
 		return this.organisationInvitationRepository.cancelInvitation({
-			invitationId,
+			id: invitationId,
 		})
 	}
 }
