@@ -52,7 +52,7 @@ export class AuthService {
 				return false
 			}
 			return true
-		} catch {
+		} catch (err) {
 			return false
 		}
 	}

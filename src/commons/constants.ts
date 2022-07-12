@@ -7,12 +7,16 @@ const dateInFuture = (duration: string) => new Date(Date.now() + ms(duration))
 
 export const ACCESS_TOKEN_COOKIE_OPTIONS: CookieSerializeOptions = {
 	httpOnly: true,
-	expires: dateInFuture('15s'),
+	expires: dateInFuture('15m'),
+	path: '/',
+	secure: false,
 }
 
 export const REFRESH_TOKEN_COOKIE_OPTIONS: CookieSerializeOptions = {
 	httpOnly: true,
 	expires: dateInFuture('7d'),
+	path: '/',
+	secure: false,
 }
 
 export const CONFIG_VALIDATION_SCHEMA = Joi.object({

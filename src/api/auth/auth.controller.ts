@@ -7,6 +7,7 @@ import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
 import { FastifyReply, FastifyRequest } from 'src/commons/types/fastify'
+import { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } from 'src/commons/constants'
 
 @Controller('auth')
 export class AuthController {
@@ -20,12 +21,8 @@ export class AuthController {
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
-		const cookieOptions: CookieSerializeOptions = {
-			httpOnly: true,
-		}
-
-		res.setCookie(accessTokenCookieName, accessToken, cookieOptions)
-			.setCookie(refreshTokenCookieName, refreshToken, cookieOptions)
+		res.setCookie(accessTokenCookieName, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
+			.setCookie(refreshTokenCookieName, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
 			.status(200)
 			.send({
 				message: 'Login successful',
@@ -46,15 +43,18 @@ export class AuthController {
 	// TODO: make this RefreshToken only route, can't be accessed with just a accessToken
 	@Delete('logout')
 	@UseGuards(RefreshAuthGuard)
-	async logout(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+	async logout(@Req() req: FastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
 		console.log
 		await this.authService.deleteRefreshToken(req.cookies[refreshTokenCookieName])
 
-		res.clearCookie(accessTokenCookieName).clearCookie(refreshTokenCookieName).status(200).send({
-			message: 'Logout successful',
-		})
+		res.clearCookie(accessTokenCookieName, ACCESS_TOKEN_COOKIE_OPTIONS)
+		res.clearCookie(refreshTokenCookieName, REFRESH_TOKEN_COOKIE_OPTIONS)
+
+		return {
+			message: 'Logout Successful',
+		}
 	}
 }

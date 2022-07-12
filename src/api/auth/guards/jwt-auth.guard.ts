@@ -51,13 +51,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 			request.cookies[accessTokenCookieName] = newAccessToken
 			request.cookies[refreshTokenCookieName] = newRefreshToken
 
-			response.cookie(accessTokenCookieName, newAccessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
-			response.cookie(refreshTokenCookieName, newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
+			response.setCookie(accessTokenCookieName, newAccessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
+			response.setCookie(refreshTokenCookieName, newRefreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
 
 			return this.activate(context)
 		} catch (err) {
-			response.clearCookie(accessTokenCookieName)
-			response.clearCookie(refreshTokenCookieName)
+			response.clearCookie(accessTokenCookieName, ACCESS_TOKEN_COOKIE_OPTIONS)
+			response.clearCookie(refreshTokenCookieName, REFRESH_TOKEN_COOKIE_OPTIONS)
 			return false
 		}
 	}
