@@ -16,16 +16,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { AcceptInvitationParams } from './dto/accept-invitation.dto'
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { DeleteInvitationParams } from './dto/delete-invitation.dto'
-import { DeleteSessionParams } from './dto/delete-session.dto'
-import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { UserService } from './user.service'
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	@Get('profile')
-	@UseGuards(JwtAuthGuard)
 	getProfile(@Req() { user }: FastifyRequest) {
 		return this.userService.getProfile(user.sub)
 	}
@@ -36,20 +34,6 @@ export class UserController {
 		@Body() { password, newPassword }: ChangePasswordDto,
 	) {
 		return this.userService.changePassword({ userId: user.sub, password, newPassword })
-	}
-
-	@Delete('sessions')
-	async deleteSessions(@Req() { user }: FastifyRequest, @Body() { password }: DeleteSessionsBody) {
-		return this.userService.deleteSessions({ userId: user.sub, password })
-	}
-
-	@Delete('session/:sessionId')
-	async deleteSession(
-		@Req() { user }: FastifyRequest,
-		@Param() { sessionId }: DeleteSessionParams,
-		@Body() { password }: { password: string },
-	) {
-		return this.userService.deleteSession({ userId: user.sub, sessionId, password })
 	}
 
 	@Get('invitations')
