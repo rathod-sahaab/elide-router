@@ -1,4 +1,6 @@
+-  [] GET /slug
 -  api
+   -  [] /csrf
    -  auth
       -  [x] login
       -  [x] register
