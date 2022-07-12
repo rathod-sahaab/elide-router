@@ -12,6 +12,15 @@ export class RefreshTokenRepository {
 		return this.prisma.refreshToken.findUnique({ where: refreshTokenWhereUniqueInput })
 	}
 
+	getUserRefreshTokens({ userId }: { userId: number }): Promise<RefreshToken[]> {
+		return this.prisma.refreshToken.findMany({
+			where: { userId },
+			orderBy: {
+				createdAt: 'desc',
+			},
+		})
+	}
+
 	createRefreshToken(
 		refreshTokenCreateInput: Prisma.RefreshTokenCreateInput,
 	): Promise<RefreshToken> {

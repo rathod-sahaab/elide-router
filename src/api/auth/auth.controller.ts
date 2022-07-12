@@ -41,6 +41,12 @@ export class AuthController {
 		return req.user
 	}
 
+	@Get('sessions')
+	@UseGuards(JwtAuthGuard)
+	async getUserSessions(@Req() { user }: FastifyRequest) {
+		return this.authService.getUserSessions({ userId: user.sub })
+	}
+
 	@Delete('sessions')
 	@UseGuards(RefreshAuthGuard)
 	async deleteSessions(

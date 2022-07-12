@@ -120,6 +120,10 @@ export class AuthService {
 		)
 	}
 
+	async getUserSessions({ userId }: { userId: number }) {
+		return this.refreshRepository.getUserRefreshTokens({ userId })
+	}
+
 	async deleteSessions({ userId, password }: { userId: number; password: string }) {
 		const user = await this.userRepository.user({ id: userId })
 
