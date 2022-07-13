@@ -6,6 +6,7 @@ import { CONFIG_VALIDATION_SCHEMA } from './commons/constants'
 import { HelperService } from './utils/helper.service'
 import { ApiModule } from './api/api.module'
 import { UtilsModule } from './utils/utils.module'
+import { RepositoriesModule } from './data/repositories/repositories.module'
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { UtilsModule } from './utils/utils.module'
 			validationSchema: CONFIG_VALIDATION_SCHEMA,
 		}),
 		ApiModule,
+		RepositoriesModule,
 		UtilsModule,
 	],
 	controllers: [AppController],

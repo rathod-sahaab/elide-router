@@ -15,6 +15,14 @@ export class LinkRepository {
 		})
 	}
 
+	async linkBySlug({ slug }: { slug: string }) {
+		return this.prisma.link.findUnique({
+			where: {
+				slug,
+			},
+		})
+	}
+
 	/**
 	Get all links of user which are not part of an organisation or a project
 	*/
