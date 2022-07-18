@@ -19,6 +19,7 @@
       -  [x] PUT /invitations/{id} -- accept
    -  link
       -  [x] /
+      -  [x] GET /{slug}/availability
       -  [x] POST /
       -  [x] DELTE /{linkId}
       -  [] /{linkId}

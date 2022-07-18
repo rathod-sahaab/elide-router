@@ -18,6 +18,20 @@ export class LinkService {
 			limit,
 		})
 	}
+
+	async getSlugAvailability(slug: string) {
+		const link = await this.linkRepository.linkBySlug({ slug })
+
+		if (link) {
+			return {
+				available: false,
+			}
+		}
+		return {
+			available: false,
+		}
+	}
+
 	async createLink({
 		slug,
 		url,

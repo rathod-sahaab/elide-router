@@ -31,6 +31,11 @@ export class LinkController {
 		})
 	}
 
+	@Get(':slug/availability')
+	async getSlugAvailability(@Param() { slug }: { slug: string }) {
+		return this.linkService.getSlugAvailability(slug)
+	}
+
 	@Post()
 	async createLink(
 		@Req() { user }: FastifyRequest,
