@@ -66,7 +66,7 @@ export class AuthService {
 		const refreshToken = await this.refreshRepository.refreshToken({ id: payload.tokenId })
 
 		if (!refreshToken || !refreshToken.isActive) {
-			throw new UnauthorizedException('Invalid refresh token.')
+			throw new UnauthorizedException('Expired refresh token')
 		}
 
 		return payload

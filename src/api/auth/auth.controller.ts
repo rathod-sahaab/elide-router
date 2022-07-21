@@ -35,6 +35,26 @@ export class AuthController {
 		return await this.authService.register({ email, name, password })
 	}
 
+	@Get('refresh')
+	@UseGuards(RefreshAuthGuard)
+	async refresh(@Req() req: RefreshFastifyRequest, @Res() res: FastifyReply) {
+		const refreshTokenCookie =
+			req.cookies[this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')]
+		const oldTokenPayload = await this.authService.validateRefreshToken(refreshTokenCookie)
+
+		const { accessToken, refreshToken } = await this.authService.createTokens(oldTokenPayload)
+
+		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
+		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+
+		res.setCookie(accessTokenCookieName, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
+			.setCookie(refreshTokenCookieName, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
+			.status(200)
+			.send({
+				message: 'Refresh successful',
+			})
+	}
+
 	@Get('profile')
 	@UseGuards(JwtAuthGuard)
 	async profile(@Req() req: FastifyRequest) {

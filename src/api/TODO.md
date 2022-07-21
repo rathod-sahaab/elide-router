@@ -7,6 +7,7 @@
       -  [x] login
       -  [x] register
       -  [x] logout
+      -  [x] /refresh
       -  [x] GET /sessions
       -  [x] DELETE /sessions
       -  [x] DELETE /sessions/{sessionId}
