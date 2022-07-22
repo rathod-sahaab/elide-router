@@ -26,14 +26,19 @@ export class AuthService {
 		return null
 	}
 
-	async login(user: {
+	async login({
+		email,
+		id,
+	}: {
 		email: string
 		id: number
-	}): Promise<{ accessToken: string; refreshToken: string }> {
-		const accessTokenPayload: TokenPayload = { email: user.email, sub: user.id }
+	}): Promise<{ accessToken: string; refreshToken: string; user: UserEntity }> {
+		const accessTokenPayload: TokenPayload = { email, sub: id }
 		const refreshTokenDB = await this.refreshRepository.createRefreshToken({
-			user: { connect: { id: user.id } },
+			user: { connect: { id } },
 		})
+
+		const user = await this.userRepository.user({ id })
 
 		const refreshTokenPayload: RefreshTokenPayload = {
 			tokenId: refreshTokenDB.id,
@@ -42,6 +47,7 @@ export class AuthService {
 		return {
 			accessToken: this.jwtService.sign(accessTokenPayload),
 			refreshToken: this.cryptoService.signRefreshToken(refreshTokenPayload),
+			user: new UserEntity(user),
 		}
 	}
 
@@ -60,13 +66,13 @@ export class AuthService {
 	async validateRefreshToken(token: string): Promise<RefreshTokenPayload> {
 		const payload = this.cryptoService.verifyRefreshToken(token)
 		if (!payload) {
-			throw new UnauthorizedException('Invalid refresh token.')
+			throw new UnauthorizedException('[validateRefreshToken] Invalid refresh token.')
 		}
 
 		const refreshToken = await this.refreshRepository.refreshToken({ id: payload.tokenId })
 
 		if (!refreshToken || !refreshToken.isActive) {
-			throw new UnauthorizedException('Expired refresh token')
+			throw new UnauthorizedException('[validateRefreshToken] Expired refresh token')
 		}
 
 		return payload
@@ -86,6 +92,16 @@ export class AuthService {
 		const refreshToken = this.cryptoService.signRefreshToken(refreshTokenPayload)
 
 		return { accessToken, refreshToken }
+	}
+
+	async refresh({ refreshTokenCookie }: { refreshTokenCookie: string }) {
+		const oldTokenPayload = await this.validateRefreshToken(refreshTokenCookie)
+
+		const { accessToken, refreshToken } = await this.createTokens(oldTokenPayload)
+
+		const user = await this.userRepository.user({ id: oldTokenPayload.accessTokenPayload.sub })
+
+		return { accessToken, refreshToken, user: new UserEntity(user) }
 	}
 
 	deleteRefreshToken(token: string): Promise<RefreshToken> {

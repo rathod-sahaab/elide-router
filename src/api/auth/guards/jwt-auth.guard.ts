@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { FastifyReply } from 'fastify'
-import { ACCESS_TOKEN_COOKIE_OPTIONS } from 'src/commons/constants'
+import { getAccessTokenCookieOptions } from 'src/commons/constants'
 import { FastifyRequest } from '../../../commons/types/fastify'
 
 export const cookieExtractorCreator = (accessTokenCookieName: string) => {
@@ -34,8 +34,8 @@ export class RefreshAuthGuard extends AuthGuard('REFRESH') {
 				'JWT_REFRESH_TOKEN_COOKIE_NAME',
 			)
 
-			res.clearCookie(accessTokenCookieName, ACCESS_TOKEN_COOKIE_OPTIONS)
-			res.clearCookie(refreshTokenCookieName, ACCESS_TOKEN_COOKIE_OPTIONS)
+			res.clearCookie(accessTokenCookieName, getAccessTokenCookieOptions())
+			res.clearCookie(refreshTokenCookieName, getAccessTokenCookieOptions())
 
 			throw new UnauthorizedException('[RefreshAuthGuard] Invalid refresh token')
 		}

@@ -6,7 +6,7 @@ import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
 import { FastifyReply, FastifyRequest, RefreshFastifyRequest } from 'src/commons/types/fastify'
-import { ACCESS_TOKEN_COOKIE_OPTIONS, REFRESH_TOKEN_COOKIE_OPTIONS } from 'src/commons/constants'
+import { getAccessTokenCookieOptions, getRefreshTokenCookieOptions } from 'src/commons/constants'
 import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { DeleteSessionParams } from './dto/delete-session.dto'
 
@@ -16,18 +16,19 @@ export class AuthController {
 
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
-	async login(@Req() req: any, @Res() res: FastifyReply) {
-		const { accessToken, refreshToken } = await this.authService.login(req.user)
+	async login(@Req() req: any, @Res({ passthrough: true }) res: FastifyReply) {
+		const { accessToken, refreshToken, user } = await this.authService.login(req.user)
 
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
 
-		res.setCookie(accessTokenCookieName, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
-			.setCookie(refreshTokenCookieName, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
-			.status(200)
-			.send({
-				message: 'Login successful',
-			})
+		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions()).setCookie(
+			refreshTokenCookieName,
+			refreshToken,
+			getRefreshTokenCookieOptions(),
+		)
+
+		return user
 	}
 
 	@Post('register')
@@ -37,22 +38,23 @@ export class AuthController {
 
 	@Get('refresh')
 	@UseGuards(RefreshAuthGuard)
-	async refresh(@Req() req: RefreshFastifyRequest, @Res() res: FastifyReply) {
+	async refresh(@Req() req: RefreshFastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
 		const refreshTokenCookie =
 			req.cookies[this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')]
-		const oldTokenPayload = await this.authService.validateRefreshToken(refreshTokenCookie)
 
-		const { accessToken, refreshToken } = await this.authService.createTokens(oldTokenPayload)
+		const { accessToken, refreshToken, user } = await this.authService.refresh({
+			refreshTokenCookie,
+		})
 
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions()).setCookie(
+			refreshTokenCookieName,
+			refreshToken,
+			getRefreshTokenCookieOptions(),
+		)
 
-		res.setCookie(accessTokenCookieName, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS)
-			.setCookie(refreshTokenCookieName, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS)
-			.status(200)
-			.send({
-				message: 'Refresh successful',
-			})
+		return user
 	}
 
 	@Get('profile')
@@ -99,8 +101,8 @@ export class AuthController {
 
 		await this.authService.deleteRefreshToken(req.cookies[refreshTokenCookieName])
 
-		res.clearCookie(accessTokenCookieName, ACCESS_TOKEN_COOKIE_OPTIONS)
-		res.clearCookie(refreshTokenCookieName, REFRESH_TOKEN_COOKIE_OPTIONS)
+		res.clearCookie(accessTokenCookieName, getAccessTokenCookieOptions())
+		res.clearCookie(refreshTokenCookieName, getRefreshTokenCookieOptions())
 
 		return {
 			message: 'Logout Successful',
