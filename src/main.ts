@@ -13,6 +13,11 @@ async function bootstrap() {
 	)
 	await app.register(fastifyCookie)
 
+	app.enableCors({
+		origin: 'http://localhost:5173',
+		credentials: true,
+	})
+
 	app.useGlobalPipes(new ValidationPipe())
 	app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 

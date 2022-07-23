@@ -28,7 +28,7 @@ export class AuthController {
 			getRefreshTokenCookieOptions(),
 		)
 
-		return user
+		return { accessToken, user }
 	}
 
 	@Post('register')
@@ -54,7 +54,7 @@ export class AuthController {
 			getRefreshTokenCookieOptions(),
 		)
 
-		return user
+		return { accessToken, user }
 	}
 
 	@Get('profile')
