@@ -123,7 +123,7 @@ export class OrganisationService {
 	async getOrganisationInvitations({
 		userId,
 		organisationId,
-		page,
+		offset,
 		limit,
 	}: {
 		userId: number
@@ -139,7 +139,7 @@ export class OrganisationService {
 		}
 		return this.organisationInvitationRepository.getInvitationsByOrganisation({
 			organisationId,
-			page,
+			offset,
 			limit,
 		})
 	}

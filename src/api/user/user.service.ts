@@ -4,7 +4,6 @@ import { UserRepository } from 'src/data/repositories/user.repository'
 import { CryptoService } from 'src/utils/crypto.service'
 import { OrganisationInvitationRepository } from 'src/data/repositories/organisation-invitations.repository'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
-import { HelperService } from 'src/utils/helper.service'
 
 @Injectable()
 export class UserService {
@@ -12,7 +11,6 @@ export class UserService {
 		private readonly cryptoService: CryptoService,
 		private readonly userRepository: UserRepository,
 		private readonly organisationInvitationRepository: OrganisationInvitationRepository,
-		private readonly helperService: HelperService,
 	) {}
 
 	async getProfile(userId: number): Promise<UserEntity> {
@@ -50,17 +48,10 @@ export class UserService {
 	}
 
 	// TODO: add feature to select staus
-	async getInvitations({ userId, page, limit }: { userId: number } & PaginationArgs) {
-		const { invitations, count } = await this.organisationInvitationRepository.getInvitations({
+	async getInvitations({ userId, offset, limit }: { userId: number } & PaginationArgs) {
+		return await this.organisationInvitationRepository.getInvitations({
 			userId,
-			page,
-			limit,
-		})
-
-		return this.helperService.formatPaginationResponse({
-			results: invitations,
-			count,
-			page,
+			offset,
 			limit,
 		})
 	}

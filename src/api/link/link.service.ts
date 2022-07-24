@@ -11,10 +11,10 @@ export class LinkService {
 		private readonly userRepository: UserRepository,
 	) {}
 
-	async getUserLinks({ userId, page, limit }: { userId: number } & PaginationArgs) {
+	async getUserLinks({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.linkRepository.getUserLinks({
 			userId,
-			page,
+			offset,
 			limit,
 		})
 	}

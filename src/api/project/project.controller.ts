@@ -11,16 +11,16 @@ export class ProjectController {
 	constructor(private readonly projectService: ProjectService) {}
 
 	@Get()
-	getAllProjects(@Req() { user }: FastifyRequest, @Param() { page, limit }: PaginationQuery) {
-		this.projectService.getAllProjects({ userId: user.sub, page, limit })
+	getAllProjects(@Req() { user }: FastifyRequest, @Param() { offset, limit }: PaginationQuery) {
+		return this.projectService.getAllProjects({ userId: user.sub, offset, limit })
 	}
 
 	@Get(':id/links')
 	getProjectLinks(
 		@Req() { user }: FastifyRequest,
-		@Param() { id, page, limit }: { id: number } & PaginationQuery,
+		@Param() { id, offset, limit }: { id: number } & PaginationQuery,
 	) {
-		this.projectService.getProjectLinks({ userId: user.sub, projectId: id, limit, page })
+		return this.projectService.getProjectLinks({ userId: user.sub, projectId: id, limit, offset })
 	}
 
 	@Post()

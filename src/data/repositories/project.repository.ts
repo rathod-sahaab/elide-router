@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { PrismaService } from './prisma.service'
 
@@ -37,13 +36,13 @@ export class ProjectRepository {
 		return false
 	}
 
-	async getAllProjects({ userId, page, limit }: { userId: number } & PaginationArgs) {
+	async getAllProjects({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.project.findMany({
 			where: {
 				ownerId: userId,
 				organisationId: null,
 			},
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',
@@ -51,12 +50,12 @@ export class ProjectRepository {
 		})
 	}
 
-	async getProjectLinks({ projectId, page, limit }: { projectId: number } & PaginationArgs) {
+	async getProjectLinks({ projectId, offset, limit }: { projectId: number } & PaginationArgs) {
 		return this.prisma.link.findMany({
 			where: {
 				projectId,
 			},
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',

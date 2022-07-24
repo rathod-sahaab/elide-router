@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Link, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { PrismaService } from './prisma.service'
 
@@ -24,48 +24,35 @@ export class LinkRepository {
 	}
 
 	/**
-	Get all links of user which are not part of an organisation or a project
-	*/
-	async getUserLinks({
-		userId,
-		page,
-		limit,
-	}: { userId: number } & PaginationArgs): Promise<{ links: Link[]; count: number }> {
+  Get all links of user which are not part of an organisation or a project
+  */
+	async getUserLinks({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		const userLinkWhere: Prisma.LinkWhereInput = {
 			creatorId: userId,
 			organisationId: null,
 			projectId: null,
 		}
 
-		const links = await this.prisma.link.findMany({
+		return this.prisma.link.findMany({
 			where: userLinkWhere,
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',
 			},
 		})
-
-		const count = await this.prisma.link.count({
-			where: userLinkWhere,
-		})
-
-		return {
-			links,
-			count,
-		}
 	}
 
 	/**
-	Get all projects of a user which are not a part of the organisation
-	*/
-	async getUserProjects({ userId, page, limit }: { userId: number } & PaginationArgs) {
+  Get all projects of a user which are not a part of the organisation
+  */
+	async getUserProjects({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.project.findMany({
 			where: {
 				ownerId: userId,
 				organisationId: null,
 			},
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',
@@ -74,14 +61,14 @@ export class LinkRepository {
 	}
 
 	/**
-	Get all organisations of a user
-	*/
-	async getUserOrganisations({ userId, page, limit }: { userId: number } & PaginationArgs) {
+  Get all organisations of a user
+  */
+	async getUserOrganisations({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.usersOnOrganisations.findMany({
 			where: {
 				userId: userId,
 			},
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			include: {
 				organisation: true,
@@ -90,14 +77,14 @@ export class LinkRepository {
 	}
 
 	/**
-	Get all links of a project
-	*/
-	async getProjectLinks({ projectId, page, limit }: { projectId: number } & PaginationArgs) {
+  Get all links of a project
+  */
+	async getProjectLinks({ projectId, offset, limit }: { projectId: number } & PaginationArgs) {
 		return this.prisma.link.findMany({
 			where: {
 				projectId: projectId,
 			},
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 			orderBy: {
 				createdAt: 'desc',

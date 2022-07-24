@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { FastifyRequest } from 'src/commons/types/fastify'
-import { HelperService } from 'src/utils/helper.service'
 import { AddMemberBody, AddMemberParams } from './dto/add-member.dto'
 import { CancelInvitationParams } from './dto/cancel-organsisation-invitation.dto'
 import { CreateOrganisationBody } from './dto/create-organisation.dto'
@@ -11,10 +10,7 @@ import { OrganisationService } from './organisation.service'
 
 @Controller('organisations')
 export class OrganisationController {
-	constructor(
-		private readonly organisationService: OrganisationService,
-		private readonly helperService: HelperService,
-	) {}
+	constructor(private readonly organisationService: OrganisationService) {}
 
 	@Get()
 	getUserOrganisations(@Req() { user }: FastifyRequest) {
@@ -69,19 +65,12 @@ export class OrganisationController {
 	async getOrgInvitations(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId }: GetOrgLinksParams,
-		@Query() { page, limit }: PaginationArgs,
+		@Query() { offset, limit }: PaginationArgs,
 	) {
-		const { invitations, count } = await this.organisationService.getOrganisationInvitations({
+		return this.organisationService.getOrganisationInvitations({
 			userId: user.sub,
 			organisationId: orgId,
-			page,
-			limit,
-		})
-
-		return this.helperService.formatPaginationResponse({
-			results: invitations,
-			count,
-			page,
+			offset,
 			limit,
 		})
 	}

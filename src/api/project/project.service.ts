@@ -6,20 +6,20 @@ import { ProjectRepository } from 'src/data/repositories/project.repository'
 export class ProjectService {
 	constructor(private readonly projectRepository: ProjectRepository) {}
 
-	getAllProjects({ userId, page, limit }: { userId: number } & PaginationArgs) {
-		return this.projectRepository.getAllProjects({ userId, page, limit })
+	getAllProjects({ userId, offset, limit }: { userId: number } & PaginationArgs) {
+		return this.projectRepository.getAllProjects({ userId, offset, limit })
 	}
 
 	getProjectLinks({
 		userId,
 		projectId,
-		page,
+		offset,
 		limit,
 	}: { userId: number; projectId: number } & PaginationArgs) {
 		if (!this.projectRepository.userCanGetProject({ userId, projectId })) {
 			throw new ForbiddenException('Project not found')
 		}
-		return this.projectRepository.getProjectLinks({ projectId, page, limit })
+		return this.projectRepository.getProjectLinks({ projectId, offset, limit })
 	}
 
 	createLink({

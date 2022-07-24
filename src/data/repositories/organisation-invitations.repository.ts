@@ -34,7 +34,7 @@ export class OrganisationInvitationRepository {
 
 	async getInvitations({
 		userId,
-		page,
+		offset,
 		limit,
 		status = OrganisationInvitationStatus.PENDING,
 	}: {
@@ -45,22 +45,16 @@ export class OrganisationInvitationRepository {
 			userId,
 			status,
 		}
-		const invitations = await this.prisma.organisationInvitation.findMany({
+		return this.prisma.organisationInvitation.findMany({
 			where: filter,
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 		})
-
-		const count = await this.prisma.organisationInvitation.count({
-			where: filter,
-		})
-
-		return { invitations, count }
 	}
 
 	async getInvitationsByOrganisation({
 		organisationId,
-		page,
+		offset,
 		limit,
 		status = OrganisationInvitationStatus.PENDING,
 	}: {
@@ -71,16 +65,10 @@ export class OrganisationInvitationRepository {
 			organisationId,
 			status,
 		}
-		const invitations = await this.prisma.organisationInvitation.findMany({
+		return this.prisma.organisationInvitation.findMany({
 			where: filter,
-			skip: (page - 1) * limit,
+			skip: offset,
 			take: limit,
 		})
-
-		const count = await this.prisma.organisationInvitation.count({
-			where: filter,
-		})
-
-		return { invitations, count }
 	}
 }

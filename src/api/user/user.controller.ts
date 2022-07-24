@@ -37,8 +37,8 @@ export class UserController {
 	}
 
 	@Get('invitations')
-	getInvitations(@Req() { user }: FastifyRequest, @Query() { page, limit }: PaginationQuery) {
-		return this.userService.getInvitations({ userId: user.sub, page, limit })
+	getInvitations(@Req() { user }: FastifyRequest, @Query() { offset, limit }: PaginationQuery) {
+		return this.userService.getInvitations({ userId: user.sub, offset, limit })
 	}
 
 	@Put('invitations/:invitationId')
