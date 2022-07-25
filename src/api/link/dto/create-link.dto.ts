@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsUrl, Min } from 'class-validator'
+import { IsBoolean, IsOptional, IsString, IsUrl, Min } from 'class-validator'
 
 export class CreateLinkInputBody {
 	@IsString()
@@ -10,6 +10,10 @@ export class CreateLinkInputBody {
 	@IsString()
 	@IsOptional()
 	description?: string
+
+	@IsBoolean()
+	@IsOptional()
+	active?: boolean
 
 	@IsOptional()
 	@Min(1)

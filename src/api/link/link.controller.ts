@@ -28,12 +28,13 @@ export class LinkController {
 	@Post()
 	async createLink(
 		@Req() { user }: FastifyRequest,
-		@Body() { slug, url, description, projectId, organisationId }: CreateLinkInputBody,
+		@Body() { slug, url, description, active, projectId, organisationId }: CreateLinkInputBody,
 	) {
 		return this.linkService.createLink({
 			creatorId: user.sub,
 			slug,
 			url,
+			active,
 			description,
 			projectId,
 			organisationId,

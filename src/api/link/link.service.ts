@@ -37,6 +37,7 @@ export class LinkService {
 		url,
 		description,
 		creatorId,
+		active,
 		projectId,
 		organisationId,
 	}: {
@@ -44,6 +45,7 @@ export class LinkService {
 		url: string
 		description: string
 		creatorId: number
+		active?: boolean
 		projectId?: number
 		organisationId?: number
 	}) {
@@ -51,6 +53,7 @@ export class LinkService {
 			slug,
 			url,
 			description,
+			active,
 			creator: { connect: { id: creatorId } },
 		}
 
