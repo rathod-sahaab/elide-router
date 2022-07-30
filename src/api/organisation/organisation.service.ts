@@ -21,7 +21,7 @@ export class OrganisationService {
 	) {}
 
 	getUserOrganisations({ userId }: { userId: number }) {
-		this.organisationRepository.getUserOrganisations({ userId })
+		return this.organisationRepository.getUserOrganisations({ userId })
 	}
 
 	getOrganisationLinks({ userId, organisationId }: { userId: number; organisationId: number }) {

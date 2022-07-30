@@ -61,7 +61,7 @@ export class OrganisationRepository {
 		}
 
 		// TODO: move to UserOrganisationRepository
-		const orgRelation = this.prisma.usersOnOrganisations.create({
+		const orgRelation = await this.prisma.usersOnOrganisations.create({
 			data: {
 				userId,
 				organisationId: organisation.id,

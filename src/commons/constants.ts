@@ -10,7 +10,7 @@ export const getAccessTokenCookieOptions = (): CookieSerializeOptions => ({
 	expires: dateInFuture('15m'),
 	path: '/',
 	secure: false,
-	sameSite: 'none',
+	sameSite: 'lax',
 })
 
 export const getRefreshTokenCookieOptions = (): CookieSerializeOptions => ({
@@ -18,7 +18,7 @@ export const getRefreshTokenCookieOptions = (): CookieSerializeOptions => ({
 	expires: dateInFuture('7d'),
 	path: '/',
 	secure: false,
-	sameSite: 'none',
+	sameSite: 'lax',
 })
 
 export const CONFIG_VALIDATION_SCHEMA = Joi.object({

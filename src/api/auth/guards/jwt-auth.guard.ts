@@ -4,16 +4,6 @@ import { AuthGuard } from '@nestjs/passport'
 import { FastifyReply } from 'fastify'
 import { getAccessTokenCookieOptions } from 'src/commons/constants'
 import { FastifyRequest } from '../../../commons/types/fastify'
-
-export const cookieExtractorCreator = (accessTokenCookieName: string) => {
-	return (request: FastifyRequest): string | null => {
-		if (request && request.cookies) {
-			return request.cookies[accessTokenCookieName]
-		}
-		return null
-	}
-}
-
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('ACCESS') {}
 
