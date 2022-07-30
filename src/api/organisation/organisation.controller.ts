@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { FastifyRequest } from 'src/commons/types/fastify'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { AddMemberBody, AddMemberParams } from './dto/add-member.dto'
 import { CancelInvitationParams } from './dto/cancel-organsisation-invitation.dto'
 import { CreateOrganisationBody } from './dto/create-organisation.dto'
@@ -9,6 +10,7 @@ import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
 
 @Controller('organisations')
+@UseGuards(JwtAuthGuard)
 export class OrganisationController {
 	constructor(private readonly organisationService: OrganisationService) {}
 
