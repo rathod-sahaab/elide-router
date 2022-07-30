@@ -5,6 +5,7 @@ import { PaginationQuery } from 'src/commons/dto/pagination.dto'
 import { CreateLinkInputBody } from './dto/create-link.dto'
 import { DeleteLinkParams } from './dto/delete-link.dto'
 import { LinkService } from './link.service'
+import { GetSlugAvailabilityParams } from './dto/get-slug-availability.dto'
 
 @Controller('links')
 @UseGuards(JwtAuthGuard)
@@ -21,7 +22,7 @@ export class LinkController {
 	}
 
 	@Get(':slug/availability')
-	async getSlugAvailability(@Param() { slug }: { slug: string }) {
+	async getSlugAvailability(@Param() { slug }: GetSlugAvailabilityParams) {
 		return this.linkService.getSlugAvailability(slug)
 	}
 

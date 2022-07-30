@@ -22,13 +22,8 @@ export class LinkService {
 	async getSlugAvailability(slug: string) {
 		const link = await this.linkRepository.linkBySlug({ slug })
 
-		if (link) {
-			return {
-				available: false,
-			}
-		}
 		return {
-			available: false,
+			available: !link,
 		}
 	}
 
