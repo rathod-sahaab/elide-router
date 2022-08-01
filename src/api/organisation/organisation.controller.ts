@@ -19,6 +19,14 @@ export class OrganisationController {
 		return this.organisationService.getUserOrganisations({ userId: user.sub })
 	}
 
+	@Get(':orgId')
+	getOrganisation(@Req() { user }: FastifyRequest, @Param() { orgId }: GetOrgLinksParams) {
+		return this.organisationService.getOrganisation({
+			userId: user.sub,
+			organisationId: orgId,
+		})
+	}
+
 	@Post()
 	createOrganisation(@Req() { user }: FastifyRequest, @Body() body: CreateOrganisationBody) {
 		return this.organisationService.createOrganisation({ userId: user.sub, ...body })

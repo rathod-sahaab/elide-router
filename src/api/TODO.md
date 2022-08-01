@@ -30,6 +30,7 @@
       -  [x] POST /
    -  organisations
       -  [x] /
+      -  [x] /{id}
       -  [x] /{id}/links
       -  [x] /{id}/projects
       -  [x] POST /
@@ -38,7 +39,6 @@
       -  [x] DELETE /{id}/member/{userId}
       -  [x] GET /invitations
       -  [x] DELETE /invitations/{id} -- cancel
-      -  [] /{id}
 
 ## Improvements
 

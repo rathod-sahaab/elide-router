@@ -24,15 +24,34 @@ export class OrganisationService {
 		return this.organisationRepository.getUserOrganisations({ userId })
 	}
 
-	getOrganisationLinks({ userId, organisationId }: { userId: number; organisationId: number }) {
-		if (!this.userRepository.userCanViewInOrganisation({ userId, organisationId })) {
+	async getOrganisation({ userId, organisationId }: { userId: number; organisationId: number }) {
+		if (!(await this.userCanViewOrganisation({ userId, organisationId }))) {
+			throw new ForbiddenException("User can't view this organisation")
+		}
+		return this.organisationRepository.getOrganisation({ organisationId })
+	}
+
+	async getOrganisationLinks({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}) {
+		if (!(await this.userRepository.userCanViewInOrganisation({ userId, organisationId }))) {
 			throw new UnauthorizedException("You don't have permission to view this organisation")
 		}
 		return this.organisationRepository.getLinks({ organisationId })
 	}
 
-	getOrganisationProjects({ userId, organisationId }: { userId: number; organisationId: number }) {
-		if (!this.userRepository.userCanViewInOrganisation({ userId, organisationId })) {
+	async getOrganisationProjects({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}) {
+		if (!(await this.userRepository.userCanViewInOrganisation({ userId, organisationId }))) {
 			throw new UnauthorizedException("You don't have permission to view this organisation")
 		}
 		return this.organisationRepository.getProjects({ organisationId })
@@ -101,7 +120,7 @@ export class OrganisationService {
 		})
 	}
 
-	private async userCanViewInOrganisationMembers({
+	private async userCanViewOrganisation({
 		userId,
 		organisationId,
 	}: {
@@ -118,6 +137,16 @@ export class OrganisationService {
 		}
 
 		return true
+	}
+
+	private async userCanViewInOrganisationMembers({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}): Promise<boolean> {
+		return this.userCanViewOrganisation({ userId, organisationId })
 	}
 
 	private async userCanViewInOrganisationInvitations({

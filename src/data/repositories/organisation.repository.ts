@@ -24,6 +24,14 @@ export class OrganisationRepository {
 		}))
 	}
 
+	async getOrganisation({ organisationId }: { organisationId: number }) {
+		return this.prisma.organisation.findUnique({
+			where: {
+				id: organisationId,
+			},
+		})
+	}
+
 	async getLinks({ organisationId }: { organisationId: number }) {
 		return this.prisma.link.findMany({
 			where: {
@@ -31,6 +39,7 @@ export class OrganisationRepository {
 			},
 		})
 	}
+
 	async getProjects({ organisationId }: { organisationId: number }) {
 		return this.prisma.project.findMany({
 			where: {
