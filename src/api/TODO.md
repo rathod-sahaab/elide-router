@@ -34,6 +34,7 @@
       -  [x] /{id}/projects
       -  [x] POST /
       -  [x] POST /{id}/invite
+      -  [x] /{id}/members
       -  [x] DELETE /{id}/member/{userId}
       -  [x] GET /invitations
       -  [x] DELETE /invitations/{id} -- cancel

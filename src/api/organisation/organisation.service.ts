@@ -101,6 +101,25 @@ export class OrganisationService {
 		})
 	}
 
+	private async userCanViewInOrganisationMembers({
+		userId,
+		organisationId,
+	}: {
+		userId: number
+		organisationId: number
+	}): Promise<boolean> {
+		const orgRelation = await this.userOrganisationRepository.getOrganisationRelation({
+			userId,
+			organisationId,
+		})
+
+		if (!orgRelation) {
+			return false
+		}
+
+		return true
+	}
+
 	private async userCanViewInOrganisationInvitations({
 		userId,
 		organisationId,
@@ -118,6 +137,24 @@ export class OrganisationService {
 		}
 
 		return orgRelation.role === OrganisationMemberRole.ADMIN
+	}
+
+	async getOrganisationMembers({
+		userId,
+		organisationId,
+		offset,
+		limit,
+	}: {
+		userId: number
+		organisationId: number
+		offset: number
+		limit: number
+	}) {
+		if (!(await this.userCanViewInOrganisationMembers({ userId, organisationId }))) {
+			throw new ForbiddenException("User can't view org members")
+		}
+
+		return this.organisationRepository.getMembers({ organisationId, offset, limit })
 	}
 
 	async getOrganisationInvitations({

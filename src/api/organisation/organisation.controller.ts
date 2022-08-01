@@ -40,6 +40,20 @@ export class OrganisationController {
 		})
 	}
 
+	@Get(':orgId/members')
+	getOrgMembers(
+		@Req() { user }: FastifyRequest,
+		@Param() { orgId }: GetOrgLinksParams,
+		@Query() { offset, limit }: PaginationArgs,
+	) {
+		return this.organisationService.getOrganisationMembers({
+			userId: user.sub,
+			organisationId: orgId,
+			offset,
+			limit,
+		})
+	}
+
 	@Post(':orgId/invite')
 	addMember(
 		@Req() { user }: FastifyRequest,

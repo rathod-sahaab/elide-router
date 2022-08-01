@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { OrganisationMemberRole } from '@prisma/client'
+import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { PrismaService } from './prisma.service'
 
 @Injectable()
@@ -34,6 +35,31 @@ export class OrganisationRepository {
 		return this.prisma.project.findMany({
 			where: {
 				organisationId,
+			},
+		})
+	}
+
+	async getMembers({
+		organisationId,
+		offset,
+		limit,
+	}: { organisationId: number } & PaginationArgs) {
+		return this.prisma.usersOnOrganisations.findMany({
+			where: {
+				organisationId,
+			},
+			skip: offset,
+			take: limit,
+			select: {
+				organisation: false,
+				role: true,
+				user: {
+					select: {
+						passwordHash: false,
+						name: true,
+						id: true,
+					},
+				},
 			},
 		})
 	}
