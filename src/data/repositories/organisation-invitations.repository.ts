@@ -69,6 +69,15 @@ export class OrganisationInvitationRepository {
 			where: filter,
 			skip: offset,
 			take: limit,
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true,
+						email: true,
+					},
+				},
+			},
 		})
 	}
 }
