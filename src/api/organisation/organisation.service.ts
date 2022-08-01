@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common'
-import { OrganisationMemberRole } from '@prisma/client'
+import { OrganisationInvitationStatus, OrganisationMemberRole } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { OrganisationInvitationRepository } from 'src/data/repositories/organisation-invitations.repository'
 import { OrganisationRepository } from 'src/data/repositories/organisation.repository'
@@ -191,9 +191,11 @@ export class OrganisationService {
 		organisationId,
 		offset,
 		limit,
+		status,
 	}: {
 		userId: number
 		organisationId: number
+		status?: OrganisationInvitationStatus
 	} & PaginationArgs) {
 		if (
 			!(await this.userCanViewInOrganisationInvitations({
@@ -207,6 +209,7 @@ export class OrganisationService {
 			organisationId,
 			offset,
 			limit,
+			status,
 		})
 	}
 

@@ -49,6 +49,9 @@ export class OrganisationInvitationRepository {
 			where: filter,
 			skip: offset,
 			take: limit,
+			orderBy: {
+				createdAt: 'desc',
+			},
 		})
 	}
 
@@ -56,19 +59,24 @@ export class OrganisationInvitationRepository {
 		organisationId,
 		offset,
 		limit,
-		status = OrganisationInvitationStatus.PENDING,
+		status,
 	}: {
 		organisationId: number
 		status?: OrganisationInvitationStatus
 	} & PaginationArgs) {
 		const filter: Prisma.OrganisationInvitationWhereInput = {
 			organisationId,
-			status,
+		}
+		if (status) {
+			filter.status = status
 		}
 		return this.prisma.organisationInvitation.findMany({
 			where: filter,
 			skip: offset,
 			take: limit,
+			orderBy: {
+				createdAt: 'desc',
+			},
 			include: {
 				user: {
 					select: {

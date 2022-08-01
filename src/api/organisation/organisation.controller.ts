@@ -6,6 +6,7 @@ import { AddMemberBody, AddMemberParams } from './dto/add-member.dto'
 import { CancelInvitationParams } from './dto/cancel-organsisation-invitation.dto'
 import { CreateOrganisationBody } from './dto/create-organisation.dto'
 import { DeleteMemberParams } from './dto/delete-member.dto'
+import { GetOrgInvitationsQuery } from './dto/get-org-invitations.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
 
@@ -89,17 +90,18 @@ export class OrganisationController {
 	async getOrgInvitations(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId }: GetOrgLinksParams,
-		@Query() { offset, limit }: PaginationArgs,
+		@Query() { offset, limit, status }: GetOrgInvitationsQuery,
 	) {
 		return this.organisationService.getOrganisationInvitations({
 			userId: user.sub,
 			organisationId: orgId,
 			offset,
 			limit,
+			status,
 		})
 	}
 
-	@Delete(':orgId/invitation/:invitationId')
+	@Delete(':orgId/invitations/:invitationId')
 	async cancelOrganisationInvitation(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId, invitationId }: CancelInvitationParams,
