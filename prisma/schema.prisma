@@ -126,5 +126,5 @@ model OrganisationInvitation {
         createdAt DateTime @default(now())
         updatedAt DateTime @default(now())
 
-        @@unique([userId, organisationId, status])
+        @@index([userId, organisationId, status])
 }
