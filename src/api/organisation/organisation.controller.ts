@@ -63,7 +63,16 @@ export class OrganisationController {
 		})
 	}
 
-	@Post(':orgId/invite')
+	@Delete(':orgId/member/:memberId')
+	deleteMember(@Req() { user }: FastifyRequest, @Param() { orgId, memberId }: DeleteMemberParams) {
+		return this.organisationService.deleteMember({
+			userId: user.sub,
+			organisationId: orgId,
+			memberId,
+		})
+	}
+
+	@Post(':orgId/invitations')
 	addMember(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId }: AddMemberParams,
@@ -74,15 +83,6 @@ export class OrganisationController {
 			organisationId: orgId,
 			memberEmail,
 			role,
-		})
-	}
-
-	@Delete(':orgId/member/:memberId')
-	deleteMember(@Req() { user }: FastifyRequest, @Param() { orgId, memberId }: DeleteMemberParams) {
-		return this.organisationService.deleteMember({
-			userId: user.sub,
-			organisationId: orgId,
-			memberId,
 		})
 	}
 

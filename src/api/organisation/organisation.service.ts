@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	ForbiddenException,
 	Injectable,
 	NotFoundException,
@@ -235,6 +236,22 @@ export class OrganisationService {
 		organisationId: number
 		invitationId: string
 	}) {
+		const invitation = await this.organisationInvitationRepository.getInvitation({
+			id: invitationId,
+		})
+
+		if (!invitation) {
+			throw new NotFoundException('Invitation not found')
+		}
+
+		if (invitation.organisationId !== organisationId) {
+			throw new BadRequestException("Invitation doesn't belong to provided organisation")
+		}
+
+		if (invitation.status !== OrganisationInvitationStatus.PENDING) {
+			throw new BadRequestException('Invitation is not pending')
+		}
+
 		if (
 			!(await this.userCanCancelInvitations({
 				userId,
@@ -243,6 +260,7 @@ export class OrganisationService {
 		) {
 			throw new ForbiddenException("You don't have permission to view invitations")
 		}
+
 		return this.organisationInvitationRepository.cancelInvitation({
 			id: invitationId,
 		})
