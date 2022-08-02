@@ -74,7 +74,7 @@ export class OrganisationService {
 		})
 	}
 
-	async addMember({
+	async createInvitation({
 		userId,
 		organisationId,
 		memberEmail,
@@ -89,10 +89,31 @@ export class OrganisationService {
 		if (!toBeMember) {
 			throw new NotFoundException('User not found')
 		}
+
 		if (!(await this.userRepository.canAddMembers({ userId, organisationId }))) {
 			throw new UnauthorizedException("You don't have permission to add members")
 		}
-		return this.userOrganisationRepository.addInvite({
+
+		const exisitingMember = await this.userOrganisationRepository.getOrganisationRelation({
+			organisationId,
+			userId: toBeMember.id,
+		})
+		if (exisitingMember) {
+			throw new BadRequestException('User is already a member of this organisation')
+		}
+
+		const pendingInvitation = await this.organisationInvitationRepository.getPendingInvitation({
+			organisationId,
+			userId: toBeMember.id,
+		})
+
+		if (pendingInvitation) {
+			throw new BadRequestException(
+				'User already has a pending invitation, cancel to send a new one.',
+			)
+		}
+
+		return this.organisationInvitationRepository.createInvitation({
 			memberId: toBeMember.id,
 			organisationId,
 			role,

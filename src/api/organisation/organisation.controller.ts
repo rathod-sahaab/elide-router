@@ -73,12 +73,12 @@ export class OrganisationController {
 	}
 
 	@Post(':orgId/invitations')
-	addMember(
+	createInvitation(
 		@Req() { user }: FastifyRequest,
 		@Param() { orgId }: AddMemberParams,
 		@Body() { memberEmail, role }: AddMemberBody,
 	) {
-		return this.organisationService.addMember({
+		return this.organisationService.createInvitation({
 			userId: user.sub,
 			organisationId: orgId,
 			memberEmail,

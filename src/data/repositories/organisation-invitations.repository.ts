@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { OrganisationInvitationStatus, Prisma } from '@prisma/client'
+import { OrganisationInvitationStatus, OrganisationMemberRole, Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { PrismaService } from './prisma.service'
 
@@ -7,8 +7,37 @@ import { PrismaService } from './prisma.service'
 export class OrganisationInvitationRepository {
 	constructor(private readonly prisma: PrismaService) {}
 
+	getPendingInvitation({ userId, organisationId }: { userId: number; organisationId: number }) {
+		return this.prisma.organisationInvitation.findFirst({
+			where: {
+				userId,
+				organisationId,
+				status: OrganisationInvitationStatus.PENDING,
+			},
+		})
+	}
+
 	getInvitation({ id }: { id: string }) {
 		return this.prisma.organisationInvitation.findUnique({ where: { id } })
+	}
+
+	createInvitation({
+		organisationId,
+		memberId,
+		role,
+	}: {
+		organisationId: number
+		memberId: number
+		role: OrganisationMemberRole
+	}) {
+		return this.prisma.organisationInvitation.create({
+			data: {
+				userId: memberId,
+				organisationId,
+				role,
+				status: OrganisationInvitationStatus.PENDING,
+			},
+		})
 	}
 
 	acceptInvitation({ id }: { id: string }) {
