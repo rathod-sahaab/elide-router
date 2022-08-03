@@ -61,7 +61,7 @@ export class OrganisationInvitationRepository {
 		})
 	}
 
-	async getInvitations({
+	async getUserInvitations({
 		userId,
 		offset,
 		limit,
@@ -78,8 +78,26 @@ export class OrganisationInvitationRepository {
 			where: filter,
 			skip: offset,
 			take: limit,
+			include: {
+				organisation: {
+					select: {
+						id: true,
+						name: true,
+						description: true,
+					},
+				},
+			},
 			orderBy: {
 				createdAt: 'desc',
+			},
+		})
+	}
+
+	async getUserPendingInvitationsCount({ userId }: { userId: number }) {
+		return this.prisma.organisationInvitation.count({
+			where: {
+				userId,
+				status: OrganisationInvitationStatus.PENDING,
 			},
 		})
 	}

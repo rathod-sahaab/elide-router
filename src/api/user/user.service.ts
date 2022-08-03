@@ -49,10 +49,16 @@ export class UserService {
 
 	// TODO: add feature to select staus
 	async getInvitations({ userId, offset, limit }: { userId: number } & PaginationArgs) {
-		return await this.organisationInvitationRepository.getInvitations({
+		return await this.organisationInvitationRepository.getUserInvitations({
 			userId,
 			offset,
 			limit,
+		})
+	}
+
+	async getPendingInvitationsCount({ userId }: { userId: number }) {
+		return await this.organisationInvitationRepository.getUserPendingInvitationsCount({
+			userId,
 		})
 	}
 

@@ -41,6 +41,12 @@ export class UserController {
 		return this.userService.getInvitations({ userId: user.sub, offset, limit })
 	}
 
+	@Get('invitations/count')
+	async getPendingInvitationsCount(@Req() { user }: FastifyRequest) {
+		const count = await this.userService.getPendingInvitationsCount({ userId: user.sub })
+		return { count }
+	}
+
 	@Put('invitations/:invitationId')
 	acceptInvitation(
 		@Req() { user }: FastifyRequest,
