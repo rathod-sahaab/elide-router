@@ -4,12 +4,14 @@ import { UserRepository } from 'src/data/repositories/user.repository'
 import { CryptoService } from 'src/utils/crypto.service'
 import { OrganisationInvitationRepository } from 'src/data/repositories/organisation-invitations.repository'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
+import { UserOrganisationRepository } from 'src/data/repositories/user-on-organisation.repository'
 
 @Injectable()
 export class UserService {
 	constructor(
 		private readonly cryptoService: CryptoService,
 		private readonly userRepository: UserRepository,
+		private readonly userOnOrganisationRepository: UserOrganisationRepository,
 		private readonly organisationInvitationRepository: OrganisationInvitationRepository,
 	) {}
 
@@ -71,9 +73,19 @@ export class UserService {
 			throw new UnauthorizedException('Invalid invitation')
 		}
 
-		await this.organisationInvitationRepository.acceptInvitation({
-			id: invitationId,
-		})
+		{
+			const { id, userId, organisationId, role } = invitation
+			// TODO: use transactions
+			await this.organisationInvitationRepository.acceptInvitation({
+				id,
+			})
+
+			await this.userOnOrganisationRepository.addMember({
+				organisationId,
+				userId,
+				role,
+			})
+		}
 
 		return {
 			message: 'Invitation accepted successfully',

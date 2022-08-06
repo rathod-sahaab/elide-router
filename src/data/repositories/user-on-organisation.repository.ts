@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { OrganisationMemberRole } from '@prisma/client'
 import { PrismaService } from './prisma.service'
 @Injectable()
 export class UserOrganisationRepository {
@@ -11,6 +12,24 @@ export class UserOrganisationRepository {
 					organisationId,
 					userId: memberId,
 				},
+			},
+		})
+	}
+
+	addMember({
+		organisationId,
+		userId,
+		role,
+	}: {
+		organisationId: number
+		userId: number
+		role: OrganisationMemberRole
+	}) {
+		return this.prisma.usersOnOrganisations.create({
+			data: {
+				organisationId,
+				userId,
+				role,
 			},
 		})
 	}
