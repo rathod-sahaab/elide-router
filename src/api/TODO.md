@@ -28,6 +28,7 @@
       -  [x] /
       -  [x] /{id}/links
       -  [x] POST /
+      -  [] DELETE /{id}
    -  organisations
       -  [x] /
       -  [x] /{id}
