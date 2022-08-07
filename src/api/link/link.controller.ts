@@ -6,6 +6,7 @@ import { CreateLinkInputBody } from './dto/create-link.dto'
 import { DeleteLinkParams } from './dto/delete-link.dto'
 import { LinkService } from './link.service'
 import { GetSlugAvailabilityParams } from './dto/get-slug-availability.dto'
+import { GetLinkParams } from './dto/get-link.dto'
 
 @Controller('links')
 @UseGuards(JwtAuthGuard)
@@ -19,6 +20,11 @@ export class LinkController {
 			offset,
 			limit,
 		})
+	}
+
+	@Get(':linkId')
+	async getLink(@Req() { user }: FastifyRequest, @Param() { linkId }: GetLinkParams) {
+		return this.linkService.getLink({ userId: user.sub, linkId })
 	}
 
 	@Get(':slug/availability')

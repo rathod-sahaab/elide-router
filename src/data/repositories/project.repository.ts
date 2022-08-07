@@ -36,6 +36,10 @@ export class ProjectRepository {
 		return false
 	}
 
+	getProject({ projectId }: { projectId: number }) {
+		return this.prisma.project.findUnique({ where: { id: projectId } })
+	}
+
 	async getAllProjects({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.project.findMany({
 			where: {
