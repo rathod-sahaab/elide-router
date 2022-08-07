@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
+	Query,
+	Req,
+	UseGuards,
+} from '@nestjs/common'
 import { JwtAuthGuard } from 'src/api/auth/guards/jwt-auth.guard'
 import { FastifyRequest } from 'src/commons/types/fastify.d'
 import { PaginationQuery } from 'src/commons/dto/pagination.dto'
@@ -7,6 +18,7 @@ import { DeleteLinkParams } from './dto/delete-link.dto'
 import { LinkService } from './link.service'
 import { GetSlugAvailabilityParams } from './dto/get-slug-availability.dto'
 import { GetLinkParams } from './dto/get-link.dto'
+import { UpdateLinkBody, UpdateLinkParams } from './dto/update-link.dto'
 
 @Controller('links')
 @UseGuards(JwtAuthGuard)
@@ -29,7 +41,10 @@ export class LinkController {
 
 	@Get(':slug/availability')
 	async getSlugAvailability(@Param() { slug }: GetSlugAvailabilityParams) {
-		return this.linkService.getSlugAvailability(slug)
+		const available = await this.linkService.getSlugAvailability(slug)
+		return {
+			available,
+		}
 	}
 
 	@Post()
@@ -45,6 +60,21 @@ export class LinkController {
 			description,
 			projectId,
 			organisationId,
+		})
+	}
+
+	@Patch(':linkId')
+	async updateLink(
+		@Req() { user }: FastifyRequest,
+		@Param() { linkId }: UpdateLinkParams,
+		@Body() { url, description, active }: UpdateLinkBody,
+	) {
+		return this.linkService.updateLink({
+			userId: user.sub,
+			id: linkId,
+			url,
+			description,
+			active,
 		})
 	}
 

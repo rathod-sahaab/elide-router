@@ -1,8 +1,12 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common'
+import { OrganisationMemberRole, Prisma } from '@prisma/client'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { LinkRepository } from 'src/data/repositories/link.repository'
-import { OrganisationRepository } from 'src/data/repositories/organisation.repository'
 import { ProjectRepository } from 'src/data/repositories/project.repository'
 import { UserOrganisationRepository } from 'src/data/repositories/user-on-organisation.repository'
 import { UserRepository } from 'src/data/repositories/user.repository'
@@ -13,7 +17,6 @@ export class LinkService {
 		private readonly linkRepository: LinkRepository,
 		private readonly userRepository: UserRepository,
 		private readonly projectRepository: ProjectRepository,
-		private readonly organisationRepository: OrganisationRepository,
 		private readonly usersOnOrganisations: UserOrganisationRepository,
 	) {}
 
@@ -39,12 +42,9 @@ export class LinkService {
 		})
 	}
 
-	async getSlugAvailability(slug: string) {
+	async getSlugAvailability(slug: string): Promise<boolean> {
 		const link = await this.linkRepository.linkBySlug({ slug })
-
-		return {
-			available: !link,
-		}
+		return !link
 	}
 
 	async createLink({
@@ -72,6 +72,10 @@ export class LinkService {
 			creator: { connect: { id: creatorId } },
 		}
 
+		if (!(await this.getSlugAvailability(slug))) {
+			throw new BadRequestException('Slug not available.')
+		}
+
 		if (projectId) {
 			if (this.userRepository.userCanCreateLinkInProject({ userId: creatorId, projectId })) {
 				creatLinkData.project = { connect: { id: projectId } }
@@ -94,6 +98,41 @@ export class LinkService {
 		return this.linkRepository.createLink(creatLinkData)
 	}
 
+	async updateLink({
+		userId,
+		id,
+		url,
+		description,
+		active,
+	}: {
+		userId: number
+		id: number
+		url?: string
+		description?: string
+		active?: boolean
+	}) {
+		const link = await this.linkRepository.link({ id })
+
+		if (!link) {
+			throw new NotFoundException('Link not found.')
+		}
+
+		if (
+			(link.projectId &&
+				!(await this.userCanEditProjectLink({ projectId: link.projectId, userId }))) ||
+			(link.organisationId &&
+				!(await this.userCanEditOrganisationLink({
+					organisationId: link.organisationId,
+					userId,
+				}))) ||
+			(!link.projectId && !link.organisationId && link.creatorId !== userId)
+		) {
+			throw new ForbiddenException('User does not have permission to edit given link')
+		}
+
+		return this.linkRepository.updateLink({ id, url, description, active })
+	}
+
 	async deleteLink({ userId, id }: { userId: number; id: number }) {
 		const link = await this.linkRepository.link({ id })
 		if (!link) {
@@ -108,6 +147,51 @@ export class LinkService {
 		return this.linkRepository.deleteLink({
 			id,
 		})
+	}
+
+	private async userCanEditOrganisationLink({
+		organisationId,
+		userId,
+	}: {
+		organisationId: number
+		userId: number
+	}): Promise<boolean> {
+		const orgRole = await this.usersOnOrganisations.getOrganisationRelation({
+			organisationId,
+			userId,
+		})
+
+		if (!orgRole) {
+			return false
+		}
+
+		return (
+			orgRole.role === OrganisationMemberRole.MAKER ||
+			orgRole.role === OrganisationMemberRole.ADMIN
+		)
+	}
+
+	private async userCanEditProjectLink({
+		projectId,
+		userId,
+	}: {
+		projectId: number
+		userId: number
+	}): Promise<boolean> {
+		const project = await this.projectRepository.getProject({ projectId })
+
+		if (!project) {
+			throw new NotFoundException('Project not found')
+		}
+
+		if (project.organisationId) {
+			return await this.userCanEditOrganisationLink({
+				userId,
+				organisationId: project.organisationId,
+			})
+		}
+
+		return project.ownerId === userId
 	}
 
 	private async userCanViewOrganisationLink({

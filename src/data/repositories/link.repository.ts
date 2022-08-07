@@ -23,9 +23,7 @@ export class LinkRepository {
 		})
 	}
 
-	/**
-  Get all links of user which are not part of an organisation or a project
-  */
+	// Get all links of user which are not part of an organisation or a project
 	async getUserLinks({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		const userLinkWhere: Prisma.LinkWhereInput = {
 			creatorId: userId,
@@ -43,9 +41,7 @@ export class LinkRepository {
 		})
 	}
 
-	/**
-  Get all projects of a user which are not a part of the organisation
-  */
+	// Get all projects of a user which are not a part of the organisation
 	async getUserProjects({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.project.findMany({
 			where: {
@@ -60,9 +56,7 @@ export class LinkRepository {
 		})
 	}
 
-	/**
-  Get all organisations of a user
-  */
+	// Get all organisations of a user
 	async getUserOrganisations({ userId, offset, limit }: { userId: number } & PaginationArgs) {
 		return this.prisma.usersOnOrganisations.findMany({
 			where: {
@@ -76,9 +70,7 @@ export class LinkRepository {
 		})
 	}
 
-	/**
-  Get all links of a project
-  */
+	// Get all links of a project
 	async getProjectLinks({ projectId, offset, limit }: { projectId: number } & PaginationArgs) {
 		return this.prisma.link.findMany({
 			where: {
@@ -95,6 +87,29 @@ export class LinkRepository {
 	async createLink(data: Prisma.LinkCreateInput) {
 		return this.prisma.link.create({
 			data,
+		})
+	}
+
+	async updateLink({
+		id,
+		url,
+		description,
+		active,
+	}: {
+		id: number
+		url?: string
+		description?: string
+		active?: boolean
+	}) {
+		return this.prisma.link.update({
+			where: {
+				id,
+			},
+			data: {
+				url,
+				description,
+				active,
+			},
 		})
 	}
 
