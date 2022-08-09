@@ -20,7 +20,7 @@ import { GetSlugAvailabilityParams } from './dto/get-slug-availability.dto'
 import { GetLinkParams } from './dto/get-link.dto'
 import { UpdateLinkBody, UpdateLinkParams } from './dto/update-link.dto'
 
-@Controller('links')
+@Controller('api/links')
 @UseGuards(JwtAuthGuard)
 export class LinkController {
 	constructor(private readonly linkService: LinkService) {}
@@ -39,8 +39,14 @@ export class LinkController {
 		return this.linkService.getLink({ userId: user.sub, linkId })
 	}
 
-	@Get(':slug/availability')
+	@Get('slug/:slug/availability')
 	async getSlugAvailability(@Param() { slug }: GetSlugAvailabilityParams) {
+		if (slug === 'api') {
+			// slug 'api' will always be unavailable as we use it for the API routes
+			return {
+				available: false,
+			}
+		}
 		const available = await this.linkService.getSlugAvailability(slug)
 		return {
 			available,

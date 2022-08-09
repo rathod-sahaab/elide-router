@@ -10,7 +10,7 @@ import { GetOrgInvitationsQuery } from './dto/get-org-invitations.dto'
 import { GetOrgLinksParams } from './dto/get-org-links.dto'
 import { OrganisationService } from './organisation.service'
 
-@Controller('organisations')
+@Controller('api/organisations')
 @UseGuards(JwtAuthGuard)
 export class OrganisationController {
 	constructor(private readonly organisationService: OrganisationService) {}

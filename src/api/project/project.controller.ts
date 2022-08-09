@@ -6,7 +6,7 @@ import { CreateProjectBody } from './dto/create-project.dto'
 import { GetProjectLinksParams } from './dto/get-project-links.dto'
 import { ProjectService } from './project.service'
 
-@Controller('projects')
+@Controller('api/projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectController {
 	constructor(private readonly projectService: ProjectService) {}

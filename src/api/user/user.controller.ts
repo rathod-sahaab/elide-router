@@ -18,7 +18,7 @@ import { ChangePasswordDto } from './dto/change-password.dto'
 import { DeleteInvitationParams } from './dto/delete-invitation.dto'
 import { UserService } from './user.service'
 
-@Controller('users')
+@Controller('api/users')
 @UseGuards(JwtAuthGuard)
 export class UserController {
 	constructor(private readonly userService: UserService) {}

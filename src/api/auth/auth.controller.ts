@@ -10,7 +10,7 @@ import { getAccessTokenCookieOptions, getRefreshTokenCookieOptions } from 'src/c
 import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { DeleteSessionParams } from './dto/delete-session.dto'
 
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
 	constructor(private authService: AuthService, private configService: ConfigService) {}
 
