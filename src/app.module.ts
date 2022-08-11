@@ -7,6 +7,7 @@ import { HelperService } from './utils/helper.service'
 import { ApiModule } from './api/api.module'
 import { UtilsModule } from './utils/utils.module'
 import { RepositoriesModule } from './data/repositories/repositories.module'
+import { ElideMailService } from './utils/mail.service'
 
 @Module({
 	imports: [
@@ -21,6 +22,6 @@ import { RepositoriesModule } from './data/repositories/repositories.module'
 		UtilsModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, HelperService],
+	providers: [AppService, HelperService, ElideMailService],
 })
 export class AppModule {}

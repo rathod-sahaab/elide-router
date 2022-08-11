@@ -1,0 +1,130 @@
+<html>
+	<head>
+		<title></title>
+		<!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. -->
+		<!--[if mso]>
+			<style>
+				* {
+					font-family: sans-serif !important;
+				}
+			</style>
+		<![endif]-->
+
+		<!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ -->
+		<!--[if !mso]><!-->
+		<link
+			href="https://fonts.googleapis.com/css?family=Poppins:400,700"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<!--<![endif]-->
+
+		<style>
+			* {
+				font-family: Poppins, sans-serif;
+			}
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				border: none;
+			}
+			/* GMail! I know how my links should look like */
+			u + #body a {
+				color: inherit;
+				text-decoration: none;
+				font-size: inherit;
+				font-family: inherit;
+				font-weight: inherit;
+				line-height: inherit;
+			}
+			:root {
+				--soft-corner: 5px;
+				--medium-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+			}
+			.link-holder a {
+				text-decoration: none !important;
+				color: inherit !important;
+			}
+		</style>
+	</head>
+	<body id="body" style="background: #eee; min-height: 600px">
+		<table style="height: 600px; width: 100%">
+			<tr style="height: 100%; width: 100%">
+				<td style="height: 100%; width: 100%">
+					<div
+						style="
+							margin: auto;
+							width: 500px;
+							max-width: 100%;
+							padding: 2rem;
+							color: #0e1823;
+							background: #fff;
+							border-radius: 6px;
+							box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+						"
+					>
+						<table>
+							<tr>
+								<td>
+									<span
+										style="
+											background-color: #eee;
+											color: #0260ee !important;
+											height: 2.5rem;
+											width: 2.5rem;
+											border-radius: 999px;
+											display: flex;
+											align-items: center;
+											justify-content: center;
+										"
+									>
+										<img
+											width="75%"
+											height="75%"
+											style="display: block; margin: auto"
+											src="http://cdn.mcauto-images-production.sendgrid.net/3ce1b41bd5b96579/ecc49f1f-5323-4a1f-82dc-088f83e1f702/120x120.png"
+										/>
+									</span>
+								</td>
+								<td
+									style="font-weight: bold; font-size: 18px; padding-left: 0.5em"
+									class="link-holder"
+								>
+									elide.in
+								</td>
+							</tr>
+						</table>
+						<div class="center-container"></div>
+						<h1>Verify your email</h1>
+						<p style="padding-bottom: 20px; font-size: 1.2rem; color: #777">
+							Hi <b>{{user_name}}</b>! Thanks for signing up on
+							<b class="link-holder">elide.in</b> use the link below to verify your email and
+							start using elide to the fullest.
+						</p>
+						<a
+							href="{{verification_link}}"
+							style="
+								color: #fff !important;
+								display: block;
+								font-size: 1rem;
+								letter-spacing: 0.02em;
+								padding: 0.8em;
+								background-color: #0260ee;
+								font-weight: bold;
+								border-radius: 6px;
+								width: 300px;
+								margin: auto;
+								text-align: center;
+								max-width: 100%;
+								text-decoration: none !important;
+							"
+						>
+							Verify email
+						</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>
