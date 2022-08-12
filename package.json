@@ -11,6 +11,7 @@
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"start": "nest start",
 		"dev": "prisma migrate dev && nest start --watch",
+		"dev:docker": "pnpm i && prisma generate && prisma migrate dev && nest start --watch",
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
@@ -23,6 +24,7 @@
 	},
 	"dependencies": {
 		"@fastify/cookie": "^6.0.0",
+		"@fastify/helmet": "8.1.0",
 		"@nestjs/common": "^8.0.0",
 		"@nestjs/config": "^2.1.0",
 		"@nestjs/core": "^8.0.0",

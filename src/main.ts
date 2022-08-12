@@ -3,6 +3,7 @@ import { NestFactory, Reflector } from '@nestjs/core'
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify'
 import { AppModule } from './app.module'
 import fastifyCookie from '@fastify/cookie'
+import fastifyHelmet from '@fastify/helmet'
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestFastifyApplication>(
@@ -12,6 +13,13 @@ async function bootstrap() {
 		}),
 	)
 	await app.register(fastifyCookie)
+	await app.register(fastifyHelmet, {
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: [`'self'`],
+			},
+		},
+	})
 
 	app.enableCors({
 		origin: 'http://localhost:5173',
