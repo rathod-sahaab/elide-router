@@ -91,8 +91,11 @@ export class AuthService {
 		const accessTokenPayload: TokenPayload = oldRefreshTokenPayload.accessTokenPayload
 		const accessToken = this.jwtService.sign(accessTokenPayload, { expiresIn: '1h' })
 
+
 		const refreshTokenPayload: RefreshTokenPayload = {
-			...oldRefreshTokenPayload,
+			// oldRefreshTokenPayload has other JWT properties so spread operator will cause problems
+			sub: oldRefreshTokenPayload.sub,
+			tokenId: oldRefreshTokenPayload.tokenId,
 			accessTokenPayload,
 		}
 
@@ -197,7 +200,7 @@ export class AuthService {
 		const payload = this.cryptoService.verifyEmailConfirmationToken(token)
 
 		if (!payload) {
-			throw new BadRequestException('[verifyAccount] Invalid verification token')
+			throw new BadRequestException('Link invalid or expired, generate a new link from profile.')
 		}
 
 		return this.userRepository.makeUserVerified({ userId: payload.sub })
