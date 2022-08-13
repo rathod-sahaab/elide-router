@@ -91,7 +91,6 @@ export class AuthService {
 		const accessTokenPayload: TokenPayload = oldRefreshTokenPayload.accessTokenPayload
 		const accessToken = this.jwtService.sign(accessTokenPayload, { expiresIn: '1h' })
 
-
 		const refreshTokenPayload: RefreshTokenPayload = {
 			// oldRefreshTokenPayload has other JWT properties so spread operator will cause problems
 			sub: oldRefreshTokenPayload.sub,
@@ -111,9 +110,17 @@ export class AuthService {
 	async refresh({ refreshTokenCookie }: { refreshTokenCookie: string }) {
 		const oldTokenPayload = await this.validateRefreshToken(refreshTokenCookie)
 
-		const { accessToken, refreshToken } = await this.createTokens(oldTokenPayload)
-
 		const user = await this.userRepository.user({ id: oldTokenPayload.accessTokenPayload.sub })
+
+		// update accessToken data
+		const { accessToken, refreshToken } = await this.createTokens({
+			...oldTokenPayload,
+			accessTokenPayload: {
+				sub: user.id,
+				email: user.email,
+				verified: user.verified,
+			},
+		})
 
 		return { accessToken, refreshToken, user: new UserEntity(user) }
 	}
