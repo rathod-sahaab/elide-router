@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { hash as argon2hash, verify as argon2verify } from 'argon2'
 import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
-import { RefreshTokenPayload } from 'src/commons/types/token-payload'
+import { EmailVerificationPayload, RefreshTokenPayload } from 'src/commons/types/token-payload'
 
 @Injectable()
 export class CryptoService {
@@ -23,27 +23,54 @@ export class CryptoService {
 		}
 	}
 
-	signRefreshToken(data: any): string | null {
-		const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET')
-		const validity = this.configService.get('JWT_REFRESH_TOKEN_VALIDITY')
+	private jwtSigner(
+		data: any,
+		{ secret, validity }: { secret: string; validity: string },
+	): string | null {
 		try {
 			return jwtSign(data, secret, { expiresIn: validity })
 		} catch (error) {
+			console.log(error)
 			return null
 		}
 	}
 
-	/**
-	@param token - Refresh token
-	@param ignoreExpiration - false by default, true incase we are invalidating it and not using it to authorize user
-	@returns {RefreshTokenPayload}
-	*/
-	verifyRefreshToken(token: string, ignoreExpiration: boolean = false): RefreshTokenPayload {
-		const secret = this.configService.get('JWT_REFRESH_TOKEN_SECRET')
+	private jwtVerifier(
+		token: string,
+		{ secret, ignoreExpiration = false }: { secret: string; ignoreExpiration?: boolean },
+	): any {
 		try {
-			return jwtVerify(token, secret, { ignoreExpiration }) as RefreshTokenPayload
+			return jwtVerify(token, secret, { ignoreExpiration })
 		} catch (error) {
+			console.log(error)
 			return null
 		}
+	}
+
+	signRefreshToken(data: RefreshTokenPayload): string | null {
+		return this.jwtSigner(data, {
+			secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+			validity: this.configService.get('JWT_REFRESH_TOKEN_VALIDITY'),
+		})
+	}
+
+	verifyRefreshToken(token: string, ignoreExpiration: boolean = false): RefreshTokenPayload {
+		return this.jwtVerifier(token, {
+			secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+			ignoreExpiration,
+		}) as RefreshTokenPayload
+	}
+
+	signEmailConfirmationToken(data: EmailVerificationPayload): string | null {
+		return this.jwtSigner(data, {
+			secret: this.configService.get('JWT_EMAIL_VERIFICATION_SECRET'),
+			validity: this.configService.get('JWT_EMAIL_VERIFICATION_VALIDITY'),
+		})
+	}
+
+	verifyEmailConfirmationToken(token: string): EmailVerificationPayload {
+		return this.jwtVerifier(token, {
+			secret: this.configService.get('JWT_EMAIL_VERIFICATION_SECRET'),
+		}) as EmailVerificationPayload
 	}
 }

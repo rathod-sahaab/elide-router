@@ -29,6 +29,13 @@ export class UserRepository {
 		})
 	}
 
+	async makeUserVerified({ userId }: { userId: number }) {
+		return this.prisma.user.update({
+			where: { id: userId },
+			data: { verified: true },
+		})
+	}
+
 	async createUser(data: Prisma.UserCreateInput): Promise<User> {
 		return this.prisma.user.create({
 			data,

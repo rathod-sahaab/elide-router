@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+	BadRequestException,
+	ForbiddenException,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { RefreshToken } from '@prisma/client'
 import { UserEntity } from 'src/data/entities/user.entity'
@@ -33,17 +38,19 @@ export class AuthService {
 		email: string
 		id: number
 	}): Promise<{ accessToken: string; refreshToken: string; user: UserEntity }> {
-		const accessTokenPayload: TokenPayload = { email, sub: id }
 		const refreshTokenDB = await this.refreshRepository.createRefreshToken({
 			user: { connect: { id } },
 		})
 
 		const user = await this.userRepository.user({ id })
 
+		const accessTokenPayload: TokenPayload = { email, sub: id, verified: user.verified }
 		const refreshTokenPayload: RefreshTokenPayload = {
 			tokenId: refreshTokenDB.id,
+			sub: user.id,
 			accessTokenPayload,
 		}
+
 		return {
 			accessToken: this.jwtService.sign(accessTokenPayload),
 			refreshToken: this.cryptoService.signRefreshToken(refreshTokenPayload),
@@ -85,11 +92,15 @@ export class AuthService {
 		const accessToken = this.jwtService.sign(accessTokenPayload, { expiresIn: '1h' })
 
 		const refreshTokenPayload: RefreshTokenPayload = {
-			tokenId: oldRefreshTokenPayload.tokenId,
+			...oldRefreshTokenPayload,
 			accessTokenPayload,
 		}
 
+		console.log(JSON.stringify(refreshTokenPayload, null, 2))
+
 		const refreshToken = this.cryptoService.signRefreshToken(refreshTokenPayload)
+
+		console.log(refreshToken)
 
 		return { accessToken, refreshToken }
 	}
@@ -180,5 +191,15 @@ export class AuthService {
 		return {
 			message: 'Session deleted successfully',
 		}
+	}
+
+	async verifyAccount(token: string) {
+		const payload = this.cryptoService.verifyEmailConfirmationToken(token)
+
+		if (!payload) {
+			throw new BadRequestException('[verifyAccount] Invalid verification token')
+		}
+
+		return this.userRepository.makeUserVerified({ userId: payload.sub })
 	}
 }

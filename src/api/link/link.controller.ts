@@ -19,6 +19,7 @@ import { LinkService } from './link.service'
 import { GetSlugAvailabilityParams } from './dto/get-slug-availability.dto'
 import { GetLinkParams } from './dto/get-link.dto'
 import { UpdateLinkBody, UpdateLinkParams } from './dto/update-link.dto'
+import { VerifiedAccountGuard } from '../auth/guards/verified.guard'
 
 @Controller('api/links')
 @UseGuards(JwtAuthGuard)
@@ -54,6 +55,7 @@ export class LinkController {
 	}
 
 	@Post()
+	@UseGuards(VerifiedAccountGuard)
 	async createLink(
 		@Req() { user }: FastifyRequest,
 		@Body() { slug, url, description, active, projectId, organisationId }: CreateLinkInputBody,
@@ -70,6 +72,7 @@ export class LinkController {
 	}
 
 	@Patch(':linkId')
+	@UseGuards(VerifiedAccountGuard)
 	async updateLink(
 		@Req() { user }: FastifyRequest,
 		@Param() { linkId }: UpdateLinkParams,
@@ -85,6 +88,7 @@ export class LinkController {
 	}
 
 	@Delete(':linkId')
+	@UseGuards(VerifiedAccountGuard)
 	async deleteLink(@Req() { user }: FastifyRequest, @Param() { linkId }: DeleteLinkParams) {
 		return this.linkService.deleteLink({
 			userId: user.sub,

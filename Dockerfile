@@ -8,6 +8,11 @@ WORKDIR /app
 
 COPY . .
 
+# API server
 EXPOSE 5000
+
+# Prisma studio
+EXPOSE 5555
+
 CMD ["pnpm", "dev:docker"]
 

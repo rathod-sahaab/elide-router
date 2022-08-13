@@ -9,6 +9,7 @@ import { FastifyReply, FastifyRequest, RefreshFastifyRequest } from 'src/commons
 import { getAccessTokenCookieOptions, getRefreshTokenCookieOptions } from 'src/commons/constants'
 import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { DeleteSessionParams } from './dto/delete-session.dto'
+import { VerifyAccountBody } from './dto/verify-account.dto'
 
 @Controller('api/auth')
 export class AuthController {
@@ -48,11 +49,9 @@ export class AuthController {
 
 		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
 		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
-		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions()).setCookie(
-			refreshTokenCookieName,
-			refreshToken,
-			getRefreshTokenCookieOptions(),
-		)
+
+		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions())
+		res.setCookie(refreshTokenCookieName, refreshToken, getRefreshTokenCookieOptions())
 
 		return { accessToken, user }
 	}
@@ -75,7 +74,7 @@ export class AuthController {
 		@Req() { user }: RefreshFastifyRequest,
 		@Body() { password }: DeleteSessionsBody,
 	) {
-		return this.authService.deleteSessions({ userId: user.accessTokenPayload.sub, password })
+		return this.authService.deleteSessions({ userId: user.sub, password })
 	}
 
 	@Delete('session/:sessionId')
@@ -86,7 +85,7 @@ export class AuthController {
 		@Body() { password }: { password: string },
 	) {
 		return this.authService.deleteSession({
-			userId: user.accessTokenPayload.sub,
+			userId: user.sub,
 			sessionId,
 			password,
 		})
@@ -107,5 +106,11 @@ export class AuthController {
 		return {
 			message: 'Logout Successful',
 		}
+	}
+
+	@Post('verification')
+	async verifyAccount(@Body() { token }: VerifyAccountBody) {
+		const response = await this.authService.verifyAccount(token)
+		return new UserEntity(response)
 	}
 }

@@ -28,6 +28,11 @@ export class UserController {
 		return this.userService.getProfile(user.sub)
 	}
 
+	@Post('verification')
+	async sendVerificationEmail(@Req() { user }: FastifyRequest) {
+		return this.userService.sendVerificationEmail(user.sub)
+	}
+
 	@Post('password')
 	async changePassword(
 		@Req() { user }: FastifyRequest,

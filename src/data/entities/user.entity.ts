@@ -5,6 +5,7 @@ export class UserEntity implements User {
 	id: number
 	email: string
 	name: string
+	verified: boolean
 
 	@Exclude()
 	passwordHash: string
