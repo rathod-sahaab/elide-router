@@ -139,16 +139,7 @@ export class LinkService {
 			throw new NotFoundException('Link not found.')
 		}
 
-		if (
-			(link.projectId &&
-				!(await this.userCanEditProjectLink({ projectId: link.projectId, userId }))) ||
-			(link.organisationId &&
-				!(await this.userCanEditOrganisationLink({
-					organisationId: link.organisationId,
-					userId,
-				}))) ||
-			(!link.projectId && !link.organisationId && link.creatorId !== userId)
-		) {
+		if (!this.userCanEditLink({ link, userId })) {
 			throw new ForbiddenException('User does not have permission to edit given link')
 		}
 
@@ -165,8 +156,7 @@ export class LinkService {
 			throw new NotFoundException('Link not found')
 		}
 
-		// TODO: project/org based permissions
-		if (link.creatorId !== userId) {
+		if (this.userCanEditLink({ link, userId })) {
 			throw new ForbiddenException('You are not allowed to delete this link')
 		}
 
@@ -175,6 +165,26 @@ export class LinkService {
 		return this.linkRepository.deleteLink({
 			id,
 		})
+	}
+
+	private async userCanEditLink({
+		link,
+		userId,
+	}: {
+		link: Link
+		userId: number
+	}): Promise<boolean> {
+		// TODO: Remove projectId recurse, use stored organisationId
+		return (
+			(link.projectId &&
+				!(await this.userCanEditProjectLink({ projectId: link.projectId, userId }))) ||
+			(link.organisationId &&
+				!(await this.userCanEditOrganisationLink({
+					organisationId: link.organisationId,
+					userId,
+				}))) ||
+			(!link.projectId && !link.organisationId && link.creatorId !== userId)
+		)
 	}
 
 	private async userCanEditOrganisationLink({
