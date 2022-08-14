@@ -84,7 +84,15 @@ export class LinkRepository {
 		})
 	}
 
-	async createLink(data: Prisma.LinkCreateInput) {
+	async createLink(data: {
+		slug: string
+		url: string
+		description: string
+		creatorId: number
+		active?: boolean
+		projectId?: number
+		organisationId?: number
+	}) {
 		return this.prisma.link.create({
 			data,
 		})

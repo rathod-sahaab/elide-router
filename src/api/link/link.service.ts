@@ -70,14 +70,6 @@ export class LinkService {
 		projectId?: number
 		organisationId?: number
 	}) {
-		const creatLinkData: Prisma.LinkCreateInput = {
-			slug,
-			url,
-			description,
-			active,
-			creator: { connect: { id: creatorId } },
-		}
-
 		if (!(await this.getSlugAvailability(slug))) {
 			throw new BadRequestException('Slug not available.')
 		}
@@ -89,29 +81,32 @@ export class LinkService {
 				throw new NotFoundException(`Project with id ${projectId} not found`)
 			}
 
-			if (this.userCanCreateLinkInProject({ userId: creatorId, project })) {
-				creatLinkData.project = { connect: { id: projectId } }
-
-				if (project.organisationId) {
-					creatLinkData.organisation = { connect: { id: project.organisationId } }
-				}
-			} else {
+			if (!(await this.userCanCreateLinkInProject({ userId: creatorId, project }))) {
 				throw new ForbiddenException('You are not allowed to create links in this project')
 			}
+
+			// TODO: Look for non mutating approach
+			organisationId = project.organisationId
 		} else if (organisationId) {
 			if (
-				this.userCanCreateLinkInOrganisation({
+				!(await this.userCanCreateLinkInOrganisation({
 					userId: creatorId,
 					organisationId,
-				})
+				}))
 			) {
-				creatLinkData.organisation = { connect: { id: organisationId } }
-			} else {
 				throw new ForbiddenException('You are not allowed to create links in this organisation')
 			}
 		}
 
-		return this.linkRepository.createLink(creatLinkData)
+		return this.linkRepository.createLink({
+			slug,
+			url,
+			description,
+			creatorId,
+			active,
+			projectId,
+			organisationId,
+		})
 	}
 
 	// only update link in cache if exists
