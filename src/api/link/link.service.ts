@@ -6,21 +6,19 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common'
-import { Link, OrganisationMemberRole, Prisma } from '@prisma/client'
+import { Link, OrganisationMemberRole, Prisma, Project } from '@prisma/client'
 import { Cache } from 'cache-manager'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { getLinkCacheKey } from 'src/commons/functions/cache-keys'
 import { LinkRepository } from 'src/data/repositories/link.repository'
 import { ProjectRepository } from 'src/data/repositories/project.repository'
 import { UserOrganisationRepository } from 'src/data/repositories/user-on-organisation.repository'
-import { UserRepository } from 'src/data/repositories/user.repository'
 
 @Injectable()
 export class LinkService {
 	constructor(
 		// repositories
 		private readonly linkRepository: LinkRepository,
-		private readonly userRepository: UserRepository,
 		private readonly projectRepository: ProjectRepository,
 		private readonly usersOnOrganisations: UserOrganisationRepository,
 
@@ -85,14 +83,24 @@ export class LinkService {
 		}
 
 		if (projectId) {
-			if (this.userRepository.userCanCreateLinkInProject({ userId: creatorId, projectId })) {
+			const project = await this.projectRepository.getProject({ projectId })
+
+			if (!project) {
+				throw new NotFoundException(`Project with id ${projectId} not found`)
+			}
+
+			if (this.userCanCreateLinkInProject({ userId: creatorId, project })) {
 				creatLinkData.project = { connect: { id: projectId } }
+
+				if (project.organisationId) {
+					creatLinkData.organisation = { connect: { id: project.organisationId } }
+				}
 			} else {
 				throw new ForbiddenException('You are not allowed to create links in this project')
 			}
 		} else if (organisationId) {
 			if (
-				this.userRepository.userCanCreateLinkInOrganisation({
+				this.userCanCreateLinkInOrganisation({
 					userId: creatorId,
 					organisationId,
 				})
@@ -174,17 +182,17 @@ export class LinkService {
 		link: Link
 		userId: number
 	}): Promise<boolean> {
-		// TODO: Remove projectId recurse, use stored organisationId
-		return (
-			(link.projectId &&
-				!(await this.userCanEditProjectLink({ projectId: link.projectId, userId }))) ||
-			(link.organisationId &&
-				!(await this.userCanEditOrganisationLink({
-					organisationId: link.organisationId,
-					userId,
-				}))) ||
-			(!link.projectId && !link.organisationId && link.creatorId !== userId)
-		)
+		if (link.organisationId) {
+			return await this.userCanEditOrganisationLink({
+				organisationId: link.organisationId,
+				userId,
+			})
+		}
+		link.creatorId !== userId
+	}
+
+	private userCanCreateLinkInOrganisation({ organisationId, userId }): Promise<boolean> {
+		return this.userCanEditOrganisationLink({ userId, organisationId })
 	}
 
 	private async userCanEditOrganisationLink({
@@ -295,5 +303,31 @@ export class LinkService {
 		}
 
 		return link.creatorId === userId
+	}
+
+	private async userCanCreateLinkInProject({
+		userId,
+		project,
+	}: {
+		project: Project
+		userId: number
+	}) {
+		if (project.ownerId === userId) {
+			return true
+		}
+
+		if (project.organisationId) {
+			const orgRole = await this.usersOnOrganisations.getOrganisationRelation({
+				organisationId: project.organisationId,
+				userId,
+			})
+
+			return (
+				orgRole.role === OrganisationMemberRole.MAKER ||
+				orgRole.role === OrganisationMemberRole.ADMIN
+			)
+		}
+
+		return false
 	}
 }
