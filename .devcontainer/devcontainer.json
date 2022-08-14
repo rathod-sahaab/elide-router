@@ -16,6 +16,14 @@
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/elide-backend",
 
+	"extensions": [
+		"GitHub.copilot",
+		"Gruntfuggly.todo-tree",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-docker"
+	],
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
