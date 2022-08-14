@@ -1,11 +1,15 @@
 import {
 	BadRequestException,
+	CACHE_MANAGER,
 	ForbiddenException,
+	Inject,
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common'
-import { OrganisationMemberRole, Prisma } from '@prisma/client'
+import { Link, OrganisationMemberRole, Prisma } from '@prisma/client'
+import { Cache } from 'cache-manager'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
+import { getLinkCacheKey } from 'src/commons/functions/cache-keys'
 import { LinkRepository } from 'src/data/repositories/link.repository'
 import { ProjectRepository } from 'src/data/repositories/project.repository'
 import { UserOrganisationRepository } from 'src/data/repositories/user-on-organisation.repository'
@@ -14,10 +18,14 @@ import { UserRepository } from 'src/data/repositories/user.repository'
 @Injectable()
 export class LinkService {
 	constructor(
+		// repositories
 		private readonly linkRepository: LinkRepository,
 		private readonly userRepository: UserRepository,
 		private readonly projectRepository: ProjectRepository,
 		private readonly usersOnOrganisations: UserOrganisationRepository,
+
+		// services
+		@Inject(CACHE_MANAGER) private cacheManager: Cache,
 	) {}
 
 	async getLink({ linkId, userId }: { userId: number; linkId: number }) {
@@ -98,6 +106,20 @@ export class LinkService {
 		return this.linkRepository.createLink(creatLinkData)
 	}
 
+	// only update link in cache if exists
+	private async updateLinkInCacheAside(link: Link): Promise<void> {
+		const key = getLinkCacheKey(link.slug)
+		const oldCachedValue = this.cacheManager.get(getLinkCacheKey(key))
+
+		if (oldCachedValue) {
+			this.cacheManager.set(key, link)
+		}
+	}
+
+	private async deleteLinkInCacheAside(slug: string): Promise<void> {
+		return this.cacheManager.del(getLinkCacheKey(slug))
+	}
+
 	async updateLink({
 		userId,
 		id,
@@ -130,7 +152,11 @@ export class LinkService {
 			throw new ForbiddenException('User does not have permission to edit given link')
 		}
 
-		return this.linkRepository.updateLink({ id, url, description, active })
+		const updatedLink = await this.linkRepository.updateLink({ id, url, description, active })
+
+		await this.updateLinkInCacheAside(updatedLink)
+
+		return updatedLink
 	}
 
 	async deleteLink({ userId, id }: { userId: number; id: number }) {
@@ -143,6 +169,8 @@ export class LinkService {
 		if (link.creatorId !== userId) {
 			throw new ForbiddenException('You are not allowed to delete this link')
 		}
+
+		await this.deleteLinkInCacheAside(link.slug)
 
 		return this.linkRepository.deleteLink({
 			id,

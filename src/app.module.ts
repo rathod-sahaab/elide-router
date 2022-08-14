@@ -21,9 +21,9 @@ import { ElideMailService } from './utils/mail.service'
 			useFactory: async (configService: ConfigService) => ({
 				max: +configService.get<number>('CACHE_MAX_ITEMS'), // testing only increase to a larger number
 				ttl: 0,
-				isGlobal: true,
 			}),
 			inject: [ConfigService],
+			isGlobal: true,
 		}),
 		ApiModule,
 		RepositoriesModule,
