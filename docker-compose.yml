@@ -1,7 +1,7 @@
 version: '3.7'
 services:
-   elide-backend-dev:
-      container_name: elide-backend-dev
+   elide-backend:
+      container_name: elide-backend
       build:
          context: .
          dockerfile: Dockerfile
