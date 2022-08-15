@@ -10,13 +10,16 @@ services:
          - 5555:5555
       depends_on:
          - postgres
+         - redis
       env_file:
          - .env
       environment:
          - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+         - BULL_REDIS_HOST=redis
+         - BULL_REDIS_PORT=6379
       volumes:
          - ./src:/app/src
-         - node_modules:/app/node_modules
+         - ./.mounts/node_modules:/app/node_modules
 
    postgres:
       image: postgres:14-alpine
@@ -27,7 +30,7 @@ services:
       env_file:
          - .env
       volumes:
-         - postgres:/var/lib/postgresql/data
+         - ./.mounts/postgres:/var/lib/postgresql/data:rw
 
    redis:
       image: redis:7.0-alpine
@@ -35,9 +38,3 @@ services:
       restart: always
       ports:
          - 6379:6379
-
-volumes:
-   postgres:
-      name: elide-db
-   node_modules:
-      name: elide-nm

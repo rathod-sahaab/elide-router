@@ -8,6 +8,8 @@ import { ApiModule } from './api/api.module'
 import { UtilsModule } from './utils/utils.module'
 import { RepositoriesModule } from './data/repositories/repositories.module'
 import { ElideMailService } from './utils/mail.service'
+import { BullModule } from '@nestjs/bull'
+import { VISITS_QUEUE } from './commons/types/queues'
 
 @Module({
 	imports: [
@@ -24,6 +26,19 @@ import { ElideMailService } from './utils/mail.service'
 			}),
 			inject: [ConfigService],
 			isGlobal: true,
+		}),
+		BullModule.forRootAsync({
+			useFactory: async (configService: ConfigService) => ({
+				redis: {
+					host: configService.get('BULL_REDIS_HOST'),
+					port: +configService.get('BULL_REDIS_PORT'),
+					db: +configService.get('BULL_REDIS_DB'),
+				},
+			}),
+			inject: [ConfigService],
+		}),
+		BullModule.registerQueue({
+			name: VISITS_QUEUE,
 		}),
 		ApiModule,
 		RepositoriesModule,

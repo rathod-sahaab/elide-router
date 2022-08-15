@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bull'
 import {
 	CACHE_MANAGER,
 	ForbiddenException,
@@ -7,8 +8,10 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Link } from '@prisma/client'
+import { Queue } from 'bull'
 import { Cache } from 'cache-manager'
 import { getLinkCacheKey } from './commons/functions/cache-keys'
+import { VISITS_QUEUE } from './commons/types/queues'
 import { LinkRepository } from './data/repositories/link.repository'
 
 @Injectable()
@@ -16,7 +19,8 @@ export class AppService {
 	constructor(
 		private readonly linkRepository: LinkRepository,
 		private readonly configService: ConfigService,
-		@Inject(CACHE_MANAGER) private cacheManager: Cache,
+		@Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+		@InjectQueue(VISITS_QUEUE) private readonly visitsQueue: Queue,
 	) {}
 
 	private async getLinkCacheAside({
@@ -32,7 +36,7 @@ export class AppService {
 	}
 
 	// Get the url where we should redirect
-	async visitLink({ slug }: { slug: string }): Promise<string> {
+	async getRedirectionUrl({ slug }: { slug: string }): Promise<string> {
 		if (slug === '') {
 			return this.configService.get('FRONTEND_URL')
 		}
@@ -51,8 +55,32 @@ export class AppService {
 			throw new ForbiddenException('Requested link is inactive currently.')
 		}
 
-		// TODO: analytics stuff
+		await this.visitsQueue.add('visit', {
+			slug,
+		})
 
 		return link.url
+	}
+
+	async analytics({
+		visitorJwt,
+		referer,
+		ip,
+		time,
+		userAgent,
+	}: {
+		visitorJwt?: string
+		referer?: string
+		ip: string
+		time: Date
+		userAgent?: string
+	}) {
+		console.log({
+			visitorJwt,
+			referer,
+			ip,
+			time,
+			userAgent,
+		})
 	}
 }

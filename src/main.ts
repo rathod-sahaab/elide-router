@@ -4,14 +4,13 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { AppModule } from './app.module'
 import fastifyCookie from '@fastify/cookie'
 import fastifyHelmet from '@fastify/helmet'
+import { ConfigService } from '@nestjs/config'
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestFastifyApplication>(
-		AppModule,
-		new FastifyAdapter({
-			logger: true,
-		}),
-	)
+	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
+
+	const configService = app.get(ConfigService)
+
 	await app.register(fastifyCookie)
 	await app.register(fastifyHelmet, {
 		contentSecurityPolicy: {
@@ -22,7 +21,7 @@ async function bootstrap() {
 	})
 
 	app.enableCors({
-		origin: 'http://localhost:5173',
+		origin: configService.get('FRONTEND_URL'),
 		credentials: true,
 	})
 
@@ -37,7 +36,7 @@ async function bootstrap() {
 	)
 	app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
 
-	await app.listen(5000, '0.0.0.0')
+	await app.listen(Number(configService.get('PORT')), '0.0.0.0')
 	console.log(`Server is running on ${await app.getUrl()}`)
 }
 bootstrap()

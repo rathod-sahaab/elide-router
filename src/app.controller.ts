@@ -1,4 +1,5 @@
-import { Controller, Get, HttpStatus, Param, Redirect } from '@nestjs/common'
+import { Controller, Get, HttpStatus, Param, Redirect, Req } from '@nestjs/common'
+import { FastifyRequest } from 'fastify'
 import { AppService } from './app.service'
 import { ElideMailService } from './utils/mail.service'
 
@@ -11,22 +12,17 @@ export class AppController {
 
 	@Get(':slug')
 	@Redirect('/', HttpStatus.TEMPORARY_REDIRECT)
-	async visitLink(@Param('slug') slug: string) {
-		// TODO: extract visitor information from cookie
-		const url = await this.appService.visitLink({ slug })
-		return { url }
-	}
+	async visitLink(@Req() req: FastifyRequest, @Param('slug') slug: string) {
+		const url = await this.appService.getRedirectionUrl({ slug })
 
-	@Get('verify/:token')
-	async verifyEmail(@Param('token') token: string) {
-		await this.mailService.sendEmailVerification({
-			email: 'garson215924@mynamejewel.com',
-			data: {
-				name: 'Abhay',
-				verificationLink: `https://elide.io/verify/${token}`,
-			},
+		await this.appService.analytics({
+			visitorJwt: req.cookies['visitor-token'],
+			referer: req.headers.referer,
+			ip: req.ip,
+			time: new Date(),
+			userAgent: req.headers['user-agent'],
 		})
 
-		return { message: 'Verification email sent' }
+		return { url }
 	}
 }

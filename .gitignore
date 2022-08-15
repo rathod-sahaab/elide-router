@@ -1,6 +1,7 @@
 # compiled output
-/dist
-/node_modules
+dist/
+node_modules/
+.mounts/
 
 # Logs
 logs
@@ -42,6 +43,7 @@ pnpm-lock.yaml
 # devel db artifacts
 dev.db
 dev.db-journal
+.elide-db/
 
 # configuration and sensitive files
 .env
