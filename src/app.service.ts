@@ -14,6 +14,15 @@ import { getLinkCacheKey } from './commons/functions/cache-keys'
 import { VISITS_QUEUE, VISITS_QUEUES_ANALYTICS } from './commons/types/queues'
 import { LinkRepository } from './data/repositories/link.repository'
 
+export interface AnalyticsData {
+	linkId: number
+	visitorJwt?: string
+	referer?: string
+	ip: string
+	time: Date
+	userAgent?: string
+}
+
 @Injectable()
 export class AppService {
 	constructor(
@@ -66,14 +75,7 @@ export class AppService {
 		return { url: link.url, linkId: link.id }
 	}
 
-	async analytics(data: {
-		linkId: number
-		visitorJwt?: string
-		referer?: string
-		ip: string
-		time: Date
-		userAgent?: string
-	}) {
+	async analytics(data: AnalyticsData) {
 		console.log('Queueing request')
 		await this.visitsQueue.add(VISITS_QUEUES_ANALYTICS, data)
 	}
