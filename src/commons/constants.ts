@@ -22,10 +22,12 @@ export const getRefreshTokenCookieOptions = (): CookieSerializeOptions => ({
 })
 
 export const CONFIG_VALIDATION_SCHEMA = Joi.object({
-	NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
-	PORT: Joi.number().default(3000),
+	NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
+	PORT: Joi.number().required(),
 	JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
 	JWT_ACCESS_TOKEN_VALIDITY: Joi.string().required(),
 	JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
 	JWT_REFRESH_TOKEN_VALIDITY: Joi.string().required(),
+	MONGO_HOST: Joi.string().required(),
+	MONGO_DATABASE: Joi.string().required(),
 })

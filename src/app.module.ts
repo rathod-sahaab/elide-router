@@ -11,7 +11,7 @@ import { ElideMailService } from './utils/mail.service'
 import { BullModule } from '@nestjs/bull'
 import { VISITS_QUEUE } from './commons/types/queues'
 import { HealthModule } from './api/health/health.module'
-import { AppProcessor } from './app.processor'
+import { MongooseModule } from '@nestjs/mongoose'
 
 @Module({
 	imports: [
@@ -42,12 +42,19 @@ import { AppProcessor } from './app.processor'
 		BullModule.registerQueue({
 			name: VISITS_QUEUE,
 		}),
+		MongooseModule.forRootAsync({
+			useFactory: async (configService: ConfigService) => ({
+				uri: configService.get('MONGO_HOST'),
+				dbName: configService.get('MONGO_DATABASE'),
+			}),
+			inject: [ConfigService],
+		}),
 		ApiModule,
 		RepositoriesModule,
 		UtilsModule,
 		HealthModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, HelperService, ElideMailService, AppProcessor],
+	providers: [AppService, HelperService, ElideMailService],
 })
 export class AppModule {}

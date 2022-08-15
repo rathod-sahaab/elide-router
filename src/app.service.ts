@@ -10,18 +10,10 @@ import { ConfigService } from '@nestjs/config'
 import { Link } from '@prisma/client'
 import { Queue } from 'bull'
 import { Cache } from 'cache-manager'
+import { AnalyticsData } from './api/analytics/dto/AnalyticsData'
 import { getLinkCacheKey } from './commons/functions/cache-keys'
 import { VISITS_QUEUE, VISITS_QUEUES_ANALYTICS } from './commons/types/queues'
 import { LinkRepository } from './data/repositories/link.repository'
-
-export interface AnalyticsData {
-	linkId: number
-	visitorJwt?: string
-	referer?: string
-	ip: string
-	time: Date
-	userAgent?: string
-}
 
 @Injectable()
 export class AppService {
@@ -67,10 +59,6 @@ export class AppService {
 		if (!link.active) {
 			throw new ForbiddenException('Requested link is inactive currently.')
 		}
-
-		await this.visitsQueue.add('visit', {
-			slug,
-		})
 
 		return { url: link.url, linkId: link.id }
 	}
