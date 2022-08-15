@@ -10,6 +10,7 @@ import { RepositoriesModule } from './data/repositories/repositories.module'
 import { ElideMailService } from './utils/mail.service'
 import { BullModule } from '@nestjs/bull'
 import { VISITS_QUEUE } from './commons/types/queues'
+import { HealthModule } from './api/health/health.module'
 
 @Module({
 	imports: [
@@ -43,6 +44,7 @@ import { VISITS_QUEUE } from './commons/types/queues'
 		ApiModule,
 		RepositoriesModule,
 		UtilsModule,
+		HealthModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, HelperService, ElideMailService],

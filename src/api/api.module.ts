@@ -6,6 +6,7 @@ import { LinkModule } from './link/link.module'
 import { OrganisationModule } from './organisation/organisation.module'
 import { ProjectModule } from './project/project.module'
 import { UserModule } from './user/user.module'
+import { HealthModule } from './health/health.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { UserModule } from './user/user.module'
 		ProjectModule,
 		RepositoriesModule,
 		PassportModule,
+		HealthModule,
 	],
 })
 export class ApiModule {}
