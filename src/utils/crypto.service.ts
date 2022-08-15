@@ -30,7 +30,6 @@ export class CryptoService {
 		try {
 			return jwtSign(data, secret, { expiresIn: validity })
 		} catch (error) {
-			console.log(error)
 			return null
 		}
 	}
@@ -42,7 +41,6 @@ export class CryptoService {
 		try {
 			return jwtVerify(token, secret, { ignoreExpiration })
 		} catch (error) {
-			console.log(error)
 			return null
 		}
 	}
@@ -54,7 +52,7 @@ export class CryptoService {
 		})
 	}
 
-	verifyRefreshToken(token: string, ignoreExpiration: boolean = false): RefreshTokenPayload {
+	verifyRefreshToken(token: string, ignoreExpiration = false): RefreshTokenPayload {
 		return this.jwtVerifier(token, {
 			secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
 			ignoreExpiration,

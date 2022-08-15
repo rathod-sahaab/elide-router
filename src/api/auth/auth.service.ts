@@ -98,11 +98,7 @@ export class AuthService {
 			accessTokenPayload,
 		}
 
-		console.log(JSON.stringify(refreshTokenPayload, null, 2))
-
 		const refreshToken = this.cryptoService.signRefreshToken(refreshTokenPayload)
-
-		console.log(refreshToken)
 
 		return { accessToken, refreshToken }
 	}
