@@ -13,9 +13,10 @@ export class AppController {
 	@Get(':slug')
 	@Redirect('/', HttpStatus.TEMPORARY_REDIRECT)
 	async visitLink(@Req() req: FastifyRequest, @Param('slug') slug: string) {
-		const url = await this.appService.getRedirectionUrl({ slug })
+		const { url, linkId } = await this.appService.getLink({ slug })
 
 		await this.appService.analytics({
+			linkId,
 			visitorJwt: req.cookies['visitor-token'],
 			referer: req.headers.referer,
 			ip: req.ip,

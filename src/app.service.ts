@@ -11,7 +11,7 @@ import { Link } from '@prisma/client'
 import { Queue } from 'bull'
 import { Cache } from 'cache-manager'
 import { getLinkCacheKey } from './commons/functions/cache-keys'
-import { VISITS_QUEUE } from './commons/types/queues'
+import { VISITS_QUEUE, VISITS_QUEUES_ANALYTICS } from './commons/types/queues'
 import { LinkRepository } from './data/repositories/link.repository'
 
 @Injectable()
@@ -36,9 +36,13 @@ export class AppService {
 	}
 
 	// Get the url where we should redirect
-	async getRedirectionUrl({ slug }: { slug: string }): Promise<string> {
+	async getLink({
+		slug,
+	}: {
+		slug: string
+	}): Promise<{ linkId?: number | undefined; url: string }> {
 		if (slug === '') {
-			return this.configService.get('FRONTEND_URL')
+			return { url: this.configService.get<string>('FRONTEND_URL') }
 		}
 
 		const { link, cacheHit } = await this.getLinkCacheAside({ slug })
@@ -59,28 +63,18 @@ export class AppService {
 			slug,
 		})
 
-		return link.url
+		return { url: link.url, linkId: link.id }
 	}
 
-	async analytics({
-		visitorJwt,
-		referer,
-		ip,
-		time,
-		userAgent,
-	}: {
+	async analytics(data: {
+		linkId: number
 		visitorJwt?: string
 		referer?: string
 		ip: string
 		time: Date
 		userAgent?: string
 	}) {
-		console.log({
-			visitorJwt,
-			referer,
-			ip,
-			time,
-			userAgent,
-		})
+		console.log('Queueing request')
+		await this.visitsQueue.add(VISITS_QUEUES_ANALYTICS, data)
 	}
 }

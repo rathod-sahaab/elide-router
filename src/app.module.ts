@@ -11,6 +11,7 @@ import { ElideMailService } from './utils/mail.service'
 import { BullModule } from '@nestjs/bull'
 import { VISITS_QUEUE } from './commons/types/queues'
 import { HealthModule } from './api/health/health.module'
+import { AppProcessor } from './app.processor'
 
 @Module({
 	imports: [
@@ -47,6 +48,6 @@ import { HealthModule } from './api/health/health.module'
 		HealthModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, HelperService, ElideMailService],
+	providers: [AppService, HelperService, ElideMailService, AppProcessor],
 })
 export class AppModule {}
