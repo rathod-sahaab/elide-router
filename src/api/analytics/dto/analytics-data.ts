@@ -1,6 +1,6 @@
 export interface AnalyticsData {
 	linkId: number
-	visitorJwt: string
+	visitorId: string
 	referer?: string
 	ip: string
 	time: Date

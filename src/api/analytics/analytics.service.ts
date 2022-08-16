@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
-import { Visit, VisitDocument } from './models/visit.model'
+import { VisitsRepository } from 'src/data/repositories/visit.repository';
 
 @Injectable()
 export class AnalyticsService {
-	constructor(@InjectModel(Visit.name) private readonly visitModel: Model<VisitDocument>) {}
+	constructor(private readonly visitsRepository: VisitsRepository) {}
 
-	async findAll() {
-		const visits = await this.visitModel.find({}).lean<Visit[]>()
-		return visits
+	async findByLinkId(linkId: number) {
+		return this.visitsRepository.findForLink({linkId})
 	}
 }
