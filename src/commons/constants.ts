@@ -30,4 +30,5 @@ export const CONFIG_VALIDATION_SCHEMA = Joi.object({
 	JWT_REFRESH_TOKEN_VALIDITY: Joi.string().required(),
 	MONGO_HOST: Joi.string().required(),
 	MONGO_DATABASE: Joi.string().required(),
+	VISITOR_ID_COOKIE_NAME: Joi.string().required(),
 })

@@ -11,6 +11,17 @@ class GeoPoint {
 	coordinates: [number]
 }
 
+export class VisitModelLocation {
+	@Prop({ required: true })
+	country: string
+
+	@Prop({ required: true })
+	region: string
+
+	@Prop({ type: GeoPoint })
+	geoPoint: GeoPoint
+}
+
 @Schema({
 	collection: VisitCollectionName,
 	timeseries: {
@@ -28,12 +39,11 @@ export class Visit {
 	@Prop({ required: true })
 	time: Date
 
-	// TODO: more sortable
-	@Prop({ required: true })
-	visitorId: string
+	@Prop({ type: Types.ObjectId, required: true })
+	visitorId: Types.ObjectId
 
-	@Prop({ type: GeoPoint, required: true })
-	location: GeoPoint
+	@Prop({ type: VisitModelLocation })
+	location?: VisitModelLocation
 
 	@Prop()
 	referer?: string
@@ -41,6 +51,8 @@ export class Visit {
 	@Prop()
 	userAgent?: string
 }
+
+export type CreateVisitPayload = Omit<Visit, '_id'>
 
 export type VisitDocument = Visit & Document
 
