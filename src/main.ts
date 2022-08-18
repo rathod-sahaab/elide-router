@@ -7,7 +7,10 @@ import fastifyHelmet from '@fastify/helmet'
 import { ConfigService } from '@nestjs/config'
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter())
+	const app = await NestFactory.create<NestFastifyApplication>(
+		AppModule,
+		new FastifyAdapter({ trustProxy: true }),
+	)
 
 	const configService = app.get(ConfigService)
 
