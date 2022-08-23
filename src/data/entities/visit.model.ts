@@ -27,7 +27,7 @@ export class VisitModelLocation {
 	timeseries: {
 		timeField: 'time',
 		metaField: 'linkId',
-		granularity: 'minutes',
+		granularity: 'seconds',
 	},
 })
 export class Visit {
