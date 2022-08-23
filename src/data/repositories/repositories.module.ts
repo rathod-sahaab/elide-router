@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { Visit, VisitSchema } from 'src/data/entities/visit.model'
+import { UniqueVisitor, UniqueVisitorSchema } from '../entities/visitor.model'
 import { LinkRepository } from './link.repository'
 import { OrganisationInvitationRepository } from './organisation-invitations.repository'
 import { OrganisationRepository } from './organisation.repository'
@@ -18,6 +19,10 @@ import { VisitsRepository } from './visit.repository'
 			{
 				name: Visit.name,
 				schema: VisitSchema,
+			},
+			{
+				name: UniqueVisitor.name,
+				schema: UniqueVisitorSchema,
 			},
 		]),
 	],

@@ -39,8 +39,8 @@ export class Visit {
 	@Prop({ required: true })
 	time: Date
 
-	@Prop({ type: Types.ObjectId, required: true })
-	visitorId: Types.ObjectId
+	@Prop({ required: true })
+	unique: boolean
 
 	@Prop({ type: VisitModelLocation })
 	location?: VisitModelLocation

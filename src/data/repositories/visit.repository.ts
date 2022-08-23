@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model, Types } from 'mongoose'
 import { CreateVisitPayload, Visit } from '../entities/visit.model'
+import { UniqueVisitor } from '../entities/visitor.model'
 
 export class Location {
 	country: string
@@ -11,7 +12,10 @@ export class Location {
 
 @Injectable()
 export class VisitsRepository {
-	constructor(@InjectModel(Visit.name) private readonly visitModel: Model<Visit>) {}
+	constructor(
+		@InjectModel(Visit.name) private readonly visitModel: Model<Visit>,
+		@InjectModel(UniqueVisitor.name) private readonly uniqueVistorModel: Model<UniqueVisitor>,
+	) {}
 
 	async findForLink({ linkId }: { linkId: number }) {
 		return this.visitModel.find({ linkId }).lean<Visit[]>
@@ -32,9 +36,18 @@ export class VisitsRepository {
 		referer?: string
 		userAgent?: string
 	}) {
+		const uniqueVisitor = await this.uniqueVistorModel.findOne({ linkId, visitorId })
+
+		if (!uniqueVisitor) {
+			await this.uniqueVistorModel.create({
+				linkId,
+				visitorId,
+			})
+		}
+
 		return this.visitModel.create(<CreateVisitPayload>{
 			linkId,
-			visitorId,
+			unique: !uniqueVisitor,
 			time,
 			referer,
 			userAgent,
@@ -51,4 +64,3 @@ export class VisitsRepository {
 		})
 	}
 }
-
