@@ -20,3 +20,11 @@ export type CreateUniqueVistorPayload = Omit<UniqueVisitor, '_id'>
 export type UniqueVisitDocument = UniqueVisitor & Document
 
 export const UniqueVisitorSchema = SchemaFactory.createForClass(UniqueVisitor)
+
+UniqueVisitorSchema.index(
+	{
+		linkId: 1,
+		visitorId: 1,
+	},
+	{ unique: true },
+)

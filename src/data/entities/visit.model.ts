@@ -12,13 +12,13 @@ class GeoPoint {
 }
 
 export class VisitModelLocation {
-	@Prop({ required: true })
+	@Prop({ required: true, index: true })
 	country: string
 
-	@Prop({ required: true })
+	@Prop({ required: true, index: true })
 	region: string
 
-	@Prop({ type: GeoPoint })
+	@Prop({ type: GeoPoint, index: true })
 	geoPoint: GeoPoint
 }
 
