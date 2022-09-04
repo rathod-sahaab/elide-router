@@ -1,10 +1,15 @@
 import { Controller, Get, HttpStatus, Param, Redirect, Req, Res } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { isMongoId } from 'class-validator'
+import { isMongoId, IsString } from 'class-validator'
 import { FastifyRequest } from 'fastify'
 import { Types } from 'mongoose'
 import { AppService } from './app.service'
 import { FastifyReply } from './commons/types/fastify'
+
+class VisitLinkParams {
+	@IsString()
+	slug: string
+}
 
 @Controller()
 export class AppController {
@@ -18,9 +23,13 @@ export class AppController {
 	async visitLink(
 		@Req() req: FastifyRequest,
 		@Res({ passthrough: true }) res: FastifyReply,
-		@Param('slug') slug: string,
+		@Param() { slug }: VisitLinkParams,
 	) {
 		const { url, linkId } = await this.appService.getLink({ slug })
+
+		if (!linkId) {
+			return { url }
+		}
 
 		const visitorIdCookieName: string = this.configService.get('VISITOR_ID_COOKIE_NAME')
 		const visitorIdCookie = req.cookies[visitorIdCookieName]

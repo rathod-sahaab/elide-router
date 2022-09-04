@@ -1,7 +1,10 @@
-import { IsBoolean, IsOptional, IsString, IsUrl, Min } from 'class-validator'
+import { IsBoolean, IsOptional, IsString, IsUrl, Matches, Min } from 'class-validator'
+import { SLUG_REGEX } from 'src/commons/constants'
 
 export class CreateLinkInputBody {
-	@IsString()
+	@Matches(SLUG_REGEX, {
+		message: 'Slug can only contain alphanumeric characters, dashes and underscores.',
+	})
 	slug: string
 
 	@IsUrl()

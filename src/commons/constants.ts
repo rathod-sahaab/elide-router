@@ -32,3 +32,5 @@ export const CONFIG_VALIDATION_SCHEMA = Joi.object({
 	MONGO_DATABASE: Joi.string().required(),
 	VISITOR_ID_COOKIE_NAME: Joi.string().required(),
 })
+
+export const SLUG_REGEX = /^[a-zA-Z0-9\-\_]{1,30}$/
