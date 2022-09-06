@@ -43,10 +43,16 @@ import { MongooseModule } from '@nestjs/mongoose'
 			name: VISITS_QUEUE,
 		}),
 		MongooseModule.forRootAsync({
-			useFactory: async (configService: ConfigService) => ({
-				uri: configService.get('MONGO_HOST'),
-				dbName: configService.get('MONGO_DATABASE'),
-			}),
+			useFactory: async (configService: ConfigService) => {
+				console.log(
+					configService.get<string>('MONGO_URI'),
+					configService.get<string>('MONGO_DATABASE'),
+				)
+				return {
+					uri: configService.get<string>('MONGO_URI'),
+					dbName: configService.get<string>('MONGO_DATABASE'),
+				}
+			},
 			inject: [ConfigService],
 		}),
 		ApiModule,

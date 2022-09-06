@@ -1,9 +1,12 @@
 # development docker container
 FROM node:16.14-alpine
 
-# Create app directory
-WORKDIR /app
+RUN npm install -g pnpm
 
-COPY . .
+USER node
+# Create app directory
+WORKDIR /elide-backend
+
+COPY --chown=node:node . .
 
 CMD ["pnpm", "dev:docker"]

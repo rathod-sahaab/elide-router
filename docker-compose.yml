@@ -18,7 +18,7 @@ services:
          - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
          - BULL_REDIS_HOST=redis
          - BULL_REDIS_PORT=6379
-         - MONGO_URL=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
+         - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
       volumes:
          - ./src:/app/src
          - eldie_nodemodules:/app/node_modules
