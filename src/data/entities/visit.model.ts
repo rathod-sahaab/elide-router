@@ -29,6 +29,8 @@ export class VisitModelLocation {
 		metaField: 'linkId',
 		granularity: 'seconds',
 	},
+	// timeseries expiration
+	expires: 60 * 60 * 24 /* days */ * 60,
 })
 export class Visit {
 	_id: Types.ObjectId

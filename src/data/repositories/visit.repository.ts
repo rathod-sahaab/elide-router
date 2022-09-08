@@ -17,8 +17,53 @@ export class VisitsRepository {
 		@InjectModel(UniqueVisitor.name) private readonly uniqueVistorModel: Model<UniqueVisitor>,
 	) {}
 
-	async findForLink({ linkId }: { linkId: number }) {
-		return this.visitModel.find({ linkId }).lean<Visit[]>
+	async findForLink({
+		linkId,
+		filters,
+	}: {
+		linkId: number
+		filters: { startHrs: number; endHrs: number }
+	}) {
+		const timeFilter: any = {
+			$gte: new Date(Date.now() - filters.startHrs * 60 * 60 * 1000),
+		}
+
+		if (filters.endHrs > 0) {
+			timeFilter.$lte = new Date(Date.now() - filters.endHrs * 60 * 60 * 1000)
+		}
+
+		return this.visitModel
+			.aggregate()
+			.match({
+				linkId,
+				time: timeFilter,
+			})
+			.group({
+				_id: {
+					$hour: {
+						$dateToString: {
+							format: '%Y-%m-%d %H:00:00',
+							date: '$time',
+						},
+					},
+				},
+				visits: {
+					$sum: 1,
+				},
+				uniqueVisitors: {
+					// TODO: might not work for booleans
+					$sum: '$unique',
+				},
+			})
+			.sort({
+				_id: 1,
+			})
+			.project({
+				_id: 0,
+				time: '$_id',
+				visits: 1,
+				uniqueVisitors: 1,
+			})
 	}
 
 	async create({
