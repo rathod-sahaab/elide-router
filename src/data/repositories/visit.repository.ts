@@ -23,7 +23,13 @@ export class VisitsRepository {
 	}: {
 		linkId: number
 		filters: { startHrs: number; endHrs: number }
-	}) {
+	}): Promise<
+		{
+			time: string
+			visits: number
+			uniqueVistors: number
+		}[]
+	> {
 		const timeFilter: any = {
 			$gte: new Date(Date.now() - filters.startHrs * 60 * 60 * 1000),
 		}
@@ -32,7 +38,7 @@ export class VisitsRepository {
 			timeFilter.$lte = new Date(Date.now() - filters.endHrs * 60 * 60 * 1000)
 		}
 
-		return this.visitModel
+		return await this.visitModel
 			.aggregate()
 			.match({
 				linkId,
@@ -40,6 +46,7 @@ export class VisitsRepository {
 			})
 			.group({
 				_id: {
+					// TODO: group by 5 minutes
 					$hour: {
 						$dateToString: {
 							format: '%Y-%m-%d %H:00:00',
