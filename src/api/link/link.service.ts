@@ -6,7 +6,7 @@ import {
 	Injectable,
 	NotFoundException,
 } from '@nestjs/common'
-import { Link, OrganisationMemberRole, Prisma, Project } from '@prisma/client'
+import { Link, OrganisationMemberRole, Project } from '@prisma/client'
 import { Cache } from 'cache-manager'
 import { PaginationArgs } from 'src/commons/dto/pagination.dto'
 import { getLinkCacheKey } from 'src/commons/functions/cache-keys'
@@ -273,13 +273,7 @@ export class LinkService {
 		return project.ownerId === userId
 	}
 
-	private async userCanViewLink({
-		userId,
-		linkId,
-	}: {
-		userId: number
-		linkId: number
-	}): Promise<boolean> {
+	async userCanViewLink({ userId, linkId }: { userId: number; linkId: number }): Promise<boolean> {
 		const link = await this.linkRepository.link({ id: linkId })
 
 		if (!link) {

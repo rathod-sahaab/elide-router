@@ -7,5 +7,6 @@ import { LinkService } from './link.service'
 	controllers: [LinkController],
 	providers: [LinkService],
 	imports: [AuthModule],
+	exports: [LinkService],
 })
 export class LinkModule {}
