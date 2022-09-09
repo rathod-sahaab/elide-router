@@ -17,7 +17,7 @@ export class VisitsRepository {
 		@InjectModel(UniqueVisitor.name) private readonly uniqueVistorModel: Model<UniqueVisitor>,
 	) {}
 
-	async findForLink({
+	async wrtTime({
 		linkId,
 		filters,
 	}: {
@@ -25,9 +25,14 @@ export class VisitsRepository {
 		filters: { startHrs: number; endHrs: number }
 	}): Promise<
 		{
-			time: string
+			time: {
+				year: number
+				month: number
+				day: number
+				hour: number
+			}
 			visits: number
-			uniqueVistors: number
+			uniqueVisitors: number
 		}[]
 	> {
 		const timeFilter: any = {
@@ -44,22 +49,23 @@ export class VisitsRepository {
 				linkId,
 				time: timeFilter,
 			})
+			.sort({
+				time: -1,
+			})
 			.group({
 				_id: {
 					// TODO: group by 5 minutes
-					$hour: {
-						$dateToString: {
-							format: '%Y-%m-%d %H:00:00',
-							date: '$time',
-						},
-					},
+					year: { $year: '$time' },
+					month: { $month: '$time' },
+					day: { $dayOfMonth: '$time' },
+					hour: { $hour: '$time' },
 				},
 				visits: {
 					$sum: 1,
 				},
 				uniqueVisitors: {
 					// TODO: might not work for booleans
-					$sum: '$unique',
+					$sum: { $cond: ['$unique', 1, 0] },
 				},
 			})
 			.sort({
@@ -115,4 +121,6 @@ export class VisitsRepository {
 				: undefined,
 		})
 	}
+
+	// TODO: wrtCountry, wrtCountryRegion
 }

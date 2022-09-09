@@ -44,10 +44,6 @@ import { MongooseModule } from '@nestjs/mongoose'
 		}),
 		MongooseModule.forRootAsync({
 			useFactory: async (configService: ConfigService) => {
-				console.log(
-					configService.get<string>('MONGO_URI'),
-					configService.get<string>('MONGO_DATABASE'),
-				)
 				return {
 					uri: configService.get<string>('MONGO_URI'),
 					dbName: configService.get<string>('MONGO_DATABASE'),

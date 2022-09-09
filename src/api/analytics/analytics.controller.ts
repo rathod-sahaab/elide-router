@@ -9,13 +9,14 @@ import { GetForLinkParams, GetForLinkQuery } from './dto/get-for-link.dto'
 export class AnalyticsController {
 	constructor(private readonly analyticsService: AnalyticsService) {}
 
-	@Get('link/:linkId')
-	getForLink(
+	@Get('links/:linkId/timeseries')
+	analyticsWrtTime(
 		@Req() { user }: FastifyRequest,
 		@Param() { linkId }: GetForLinkParams,
 		@Query() { startHrs = 24, endHrs = 0 }: GetForLinkQuery,
 	) {
-		return this.analyticsService.findByLinkId({
+		console.log('Found API')
+		return this.analyticsService.analyticsWrtTime({
 			userId: user.sub,
 			linkId,
 			filters: {

@@ -9,7 +9,7 @@ export class AnalyticsService {
 		private readonly linksService: LinkService,
 	) {}
 
-	async findByLinkId({
+	async analyticsWrtTime({
 		userId,
 		linkId,
 		filters,
@@ -18,10 +18,37 @@ export class AnalyticsService {
 		linkId: number
 		filters: { startHrs: number; endHrs: number }
 	}) {
+		const requestTime = new Date().getTime()
+
 		if (!(await this.linksService.userCanViewLink({ userId, linkId }))) {
 			throw new ForbiddenException('User does not have permission to view this link.')
 		}
 
-		return this.visitsRepository.findForLink({ linkId, filters })
+		return (await this.visitsRepository.wrtTime({ linkId, filters })).map(
+			({
+				time,
+				visits,
+				uniqueVisitors,
+			}: {
+				time: {
+					year: number
+					month: number
+					day: number
+					hour: number
+				}
+				visits: number
+				uniqueVisitors: number
+			}) => {
+				// Date months are 0-indexed
+				const groupDate = new Date(time.year, time.month - 1, time.day, time.hour)
+				const groupTime = groupDate.getTime()
+				return {
+					x: filters.startHrs - Math.floor((requestTime - groupTime) / (60 * 60 * 1000)),
+					time: groupDate.toDateString(),
+					visits,
+					uniqueVisitors,
+				}
+			},
+		)
 	}
 }
