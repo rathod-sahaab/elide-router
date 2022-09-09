@@ -15,7 +15,6 @@ export class AnalyticsController {
 		@Param() { linkId }: GetForLinkParams,
 		@Query() { startHrs = 24, endHrs = 0 }: GetForLinkQuery,
 	) {
-		console.log('Found API')
 		return this.analyticsService.analyticsWrtTime({
 			userId: user.sub,
 			linkId,

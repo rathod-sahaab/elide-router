@@ -44,7 +44,7 @@ export class AnalyticsService {
 				const groupTime = groupDate.getTime()
 				return {
 					x: filters.startHrs - Math.floor((requestTime - groupTime) / (60 * 60 * 1000)),
-					time: groupDate.toDateString(),
+					time: groupDate.toISOString(),
 					visits,
 					uniqueVisitors,
 				}
