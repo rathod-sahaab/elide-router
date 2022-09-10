@@ -64,7 +64,6 @@ export class AppService {
 	}
 
 	async analytics(data: AnalyticsData) {
-		console.log('Queueing request')
 		await this.visitsQueue.add(VISITS_QUEUES_ANALYTICS, data)
 	}
 }
