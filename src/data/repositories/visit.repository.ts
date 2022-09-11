@@ -92,7 +92,12 @@ export class VisitsRepository {
 		time: Date
 		location?: Location
 		referer?: string
-		userAgent?: string
+		userAgent?: {
+			browser: string
+			os: string
+			device: string
+			source: string
+		}
 	}) {
 		const uniqueVisitor = await this.uniqueVistorModel.findOne({ linkId, visitorId })
 

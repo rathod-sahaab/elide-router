@@ -3,6 +3,20 @@ import { Types } from 'mongoose'
 
 export const VisitCollectionName = 'visits' as const
 
+class UserAgent {
+	@Prop()
+	browser: string
+
+	@Prop()
+	os: string
+
+	@Prop()
+	device: string
+
+	@Prop()
+	source: string
+}
+
 class GeoPoint {
 	@Prop({ enum: ['Point'], default: 'Point' })
 	type: string
@@ -50,8 +64,8 @@ export class Visit {
 	@Prop()
 	referer?: string
 
-	@Prop()
-	userAgent?: string
+	@Prop({ type: UserAgent })
+	userAgent?: UserAgent
 }
 
 export type CreateVisitPayload = Omit<Visit, '_id'>
