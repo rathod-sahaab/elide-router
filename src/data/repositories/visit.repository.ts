@@ -64,7 +64,6 @@ export class VisitsRepository {
 					$sum: 1,
 				},
 				uniqueVisitors: {
-					// TODO: might not work for booleans
 					$sum: { $cond: ['$unique', 1, 0] },
 				},
 			})
@@ -77,6 +76,63 @@ export class VisitsRepository {
 				visits: 1,
 				uniqueVisitors: 1,
 			})
+	}
+
+	private async wrtUserAgent<T extends 'browser' | 'os'>({
+		linkId,
+		filters,
+		property,
+	}: {
+		linkId: number
+		property: T
+		filters: { startHrs: number; endHrs: number }
+	}): Promise<
+		({
+			[key in T]: string
+		} & { visits: number; uniqueVisitors: number })[]
+	> {
+		const timeFilter: any = {
+			$gte: new Date(Date.now() - filters.startHrs * 60 * 60 * 1000),
+		}
+
+		if (filters.endHrs > 0) {
+			timeFilter.$lte = new Date(Date.now() - filters.endHrs * 60 * 60 * 1000)
+		}
+
+		return await this.visitModel
+			.aggregate()
+			.match({
+				linkId,
+				time: timeFilter,
+			})
+			.group({
+				_id: `$userAgent.${property}`,
+				visits: {
+					$sum: 1,
+				},
+				uniqueVisitors: {
+					$sum: { $cond: ['$unique', 1, 0] },
+				},
+			})
+			.project({
+				_id: 0,
+				[property]: '$_id',
+				visits: 1,
+				uniqueVisitors: 1,
+			})
+	}
+
+	async wrtUserAgents({
+		linkId,
+		filters,
+	}: {
+		linkId: number
+		filters: { startHrs: number; endHrs: number }
+	}) {
+		return {
+			browsers: await this.wrtUserAgent({ linkId, filters, property: 'browser' }),
+			oses: await this.wrtUserAgent({ linkId, filters, property: 'os' }),
+		}
 	}
 
 	async create({

@@ -6,6 +6,7 @@ import { GetForLinkParams, GetForLinkQuery } from './dto/get-for-link.dto'
 
 @Controller('api/analytics')
 @UseGuards(JwtAuthGuard)
+// TODO: Cache these requests
 export class AnalyticsController {
 	constructor(private readonly analyticsService: AnalyticsService) {}
 
@@ -16,6 +17,22 @@ export class AnalyticsController {
 		@Query() { startHrs = 24, endHrs = 0 }: GetForLinkQuery,
 	) {
 		return this.analyticsService.analyticsWrtTime({
+			userId: user.sub,
+			linkId,
+			filters: {
+				startHrs,
+				endHrs,
+			},
+		})
+	}
+
+	@Get('links/:linkId/user-agents')
+	analyticsWrtUserAgents(
+		@Req() { user }: FastifyRequest,
+		@Param() { linkId }: GetForLinkParams,
+		@Query() { startHrs = 24, endHrs = 0 }: GetForLinkQuery,
+	) {
+		return this.analyticsService.analyticsWrtUserAgents({
 			userId: user.sub,
 			linkId,
 			filters: {

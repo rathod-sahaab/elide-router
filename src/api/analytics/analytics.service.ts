@@ -51,4 +51,20 @@ export class AnalyticsService {
 			},
 		)
 	}
+
+	async analyticsWrtUserAgents({
+		userId,
+		linkId,
+		filters,
+	}: {
+		userId: number
+		linkId: number
+		filters: { startHrs: number; endHrs: number }
+	}) {
+		if (!(await this.linksService.userCanViewLink({ userId, linkId }))) {
+			throw new ForbiddenException('User does not have permission to view this link.')
+		}
+
+		return await this.visitsRepository.wrtUserAgents({ linkId, filters })
+	}
 }
