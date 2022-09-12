@@ -10,6 +10,11 @@ import { GetForLinkParams, GetForLinkQuery } from './dto/get-for-link.dto'
 export class AnalyticsController {
 	constructor(private readonly analyticsService: AnalyticsService) {}
 
+	@Get('links/:linkId/overview')
+	analyticsOverview(@Req() { user }: FastifyRequest, @Param() { linkId }: GetForLinkParams) {
+		return this.analyticsService.getOverview(user.sub, linkId)
+	}
+
 	@Get('links/:linkId/timeseries')
 	analyticsWrtTime(
 		@Req() { user }: FastifyRequest,

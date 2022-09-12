@@ -17,6 +17,14 @@ export class VisitsRepository {
 		@InjectModel(UniqueVisitor.name) private readonly uniqueVistorModel: Model<UniqueVisitor>,
 	) {}
 
+	async getTotalVisits(linkId: number): Promise<number> {
+		return await this.visitModel.countDocuments({ linkId })
+	}
+
+	async getTotalUniqueVisitors(linkId: number): Promise<number> {
+		return await this.uniqueVistorModel.countDocuments({ linkId })
+	}
+
 	async wrtTime({
 		linkId,
 		filters,

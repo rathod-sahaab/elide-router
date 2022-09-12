@@ -9,6 +9,23 @@ export class AnalyticsService {
 		private readonly linksService: LinkService,
 	) {}
 
+	async getOverview(
+		userId: number,
+		linkId: number,
+	): Promise<{
+		visits: number
+		uniqueVisitors: number
+	}> {
+		if (!(await this.linksService.userCanViewLink({ userId, linkId }))) {
+			throw new ForbiddenException('User does not have permission to view this link.')
+		}
+
+		return {
+			visits: await this.visitsRepository.getTotalVisits(linkId),
+			uniqueVisitors: await this.visitsRepository.getTotalUniqueVisitors(linkId),
+		}
+	}
+
 	async analyticsWrtTime({
 		userId,
 		linkId,
