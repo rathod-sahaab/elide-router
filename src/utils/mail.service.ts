@@ -35,4 +35,27 @@ export class ElideMailService {
 			dynamicTemplateData: data,
 		})
 	}
+	async sendForgotPasswordEmail({
+		email,
+		data: { name, resetPasswordLink },
+	}: {
+		email: string
+		data: {
+			name: string
+			resetPasswordLink: string
+		}
+	}) {
+		return this.send({
+			from: {
+				name: this.configSerice.get('EMAIL_ACCOUNTS_FROM_NAME'),
+				email: this.configSerice.get('EMAIL_ACCOUNTS_FROM_EMAIL'),
+			},
+			to: email,
+			templateId: this.configSerice.get('SENDGRID_RESET_PASSWORD_TID'),
+			dynamicTemplateData: {
+				name,
+				resetPasswordLink,
+			},
+		})
+	}
 }

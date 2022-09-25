@@ -14,3 +14,9 @@ export class EmailVerificationPayload {
 	public sub: number // user id
 	public email: string // user email
 }
+
+export class ForgotPasswordPayload {
+	public sub: number // user id
+	public email: string // user email
+}
+

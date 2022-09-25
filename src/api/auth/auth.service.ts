@@ -11,6 +11,8 @@ import { CryptoService } from 'src/utils/crypto.service'
 import { RefreshTokenRepository } from 'src/data/repositories/refresh-token.repository'
 import { UserRepository } from 'src/data/repositories/user.repository'
 import { RefreshTokenPayload, TokenPayload } from '../../commons/types/token-payload'
+import { ElideMailService } from 'src/utils/mail.service'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,9 @@ export class AuthService {
 		private readonly jwtService: JwtService,
 		private readonly refreshRepository: RefreshTokenRepository,
 		private readonly userRepository: UserRepository,
+
+		private readonly mailService: ElideMailService,
+		private readonly configService: ConfigService,
 	) {}
 
 	async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -197,6 +202,63 @@ export class AuthService {
 		return {
 			message: 'Session deleted successfully',
 		}
+	}
+
+	async forgotPassword({ email }: { email: string }) {
+		const user = await this.userRepository.user({ email })
+
+		if (user) {
+			const token = this.cryptoService.signForgotPasswordToken({ sub: user.id, email })
+
+			const FRONTEND_URL = this.configService.get('FRONTEND_URL')
+
+			const resetPasswordLink = `${FRONTEND_URL}/account/reset-password?token=${token}`
+
+			await this.mailService.sendForgotPasswordEmail({
+				email,
+				data: {
+					name: user.name,
+					resetPasswordLink,
+				},
+			})
+		}
+
+		return {
+			message: 'Email sent successfully',
+		}
+	}
+
+	async resetPassword({
+		token,
+		password,
+	}: {
+		token: string
+		password: string
+	}): Promise<UserEntity> {
+		const payload = this.cryptoService.verifyForgotPasswordToken(token)
+
+		if (!payload) {
+			throw new UnauthorizedException('Invalid token')
+		}
+
+		const user = await this.userRepository.user({ email: payload.email })
+
+		if (!user) {
+			throw new UnauthorizedException('Invalid token')
+		}
+
+		const passwordHash = await this.cryptoService.hashPassword(password)
+
+		return new UserEntity(
+			await this.userRepository.updateUser(
+				{
+					id: user.id,
+				},
+				{
+					passwordHash,
+				},
+			),
+		)
 	}
 
 	async verifyAccount(token: string) {

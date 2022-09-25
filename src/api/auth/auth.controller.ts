@@ -108,6 +108,16 @@ export class AuthController {
 		}
 	}
 
+	@Post('forgot-password')
+	async forgotPassword(@Body() { email }: { email: string }) {
+		return this.authService.forgotPassword({ email })
+	}
+
+	@Post('reset-password')
+	async resetPassword(@Body() { token, password }: { token: string; password: string }) {
+		return this.authService.resetPassword({ token, password })
+	}
+
 	@Post('verification')
 	async verifyAccount(@Body() { token }: VerifyAccountBody) {
 		const response = await this.authService.verifyAccount(token)

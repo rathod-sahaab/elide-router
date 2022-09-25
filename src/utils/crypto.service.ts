@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { hash as argon2hash, verify as argon2verify } from 'argon2'
 import { sign as jwtSign, verify as jwtVerify } from 'jsonwebtoken'
-import { EmailVerificationPayload, RefreshTokenPayload } from 'src/commons/types/token-payload'
+import {
+	EmailVerificationPayload,
+	ForgotPasswordPayload,
+	RefreshTokenPayload,
+} from 'src/commons/types/token-payload'
 
 @Injectable()
 export class CryptoService {
@@ -70,5 +74,18 @@ export class CryptoService {
 		return this.jwtVerifier(token, {
 			secret: this.configService.get('JWT_EMAIL_VERIFICATION_SECRET'),
 		}) as EmailVerificationPayload
+	}
+
+	signForgotPasswordToken(data: ForgotPasswordPayload): string | null {
+		return this.jwtSigner(data, {
+			secret: this.configService.get('JWT_FORGOT_PASSWORD_SECRET'),
+			validity: this.configService.get('JWT_FORGOT_PASSWORD_VALIDITY'),
+		})
+	}
+
+	verifyForgotPasswordToken(token: string): ForgotPasswordPayload {
+		return this.jwtVerifier(token, {
+			secret: this.configService.get('JWT_FORGOT_PASSWORD_SECRET'),
+		}) as ForgotPasswordPayload
 	}
 }
