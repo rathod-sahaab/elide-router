@@ -21,7 +21,7 @@ services:
          - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
       volumes:
          - ./src:/app/src
-         - eldie_nodemodules:/app/node_modules
+         - elide_nodemodules:/app/node_modules
 
    postgres:
       image: postgres:14-alpine
@@ -59,7 +59,7 @@ services:
 volumes:
    elide_postgres:
       driver: local
-   eldie_nodemodules:
+   elide_nodemodules:
       driver: local
    elide_mongo:
       driver: local
