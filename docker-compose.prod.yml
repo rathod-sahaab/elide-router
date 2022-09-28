@@ -1,6 +1,7 @@
 version: '3.7'
 services:
    elide-backend:
+      image: elide-backend
       container_name: elide-backend
       build:
          context: .
