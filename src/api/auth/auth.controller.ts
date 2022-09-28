@@ -1,33 +1,31 @@
 import { Body, Controller, Delete, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { UserEntity } from 'src/data/entities/user.entity'
 import { AuthService } from './auth.service'
 import { RegisterBody } from './dto/register.dto'
 import { JwtAuthGuard, RefreshAuthGuard } from './guards/jwt-auth.guard'
 import { LocalAuthGuard } from './guards/local-auth.guard'
 import { FastifyReply, FastifyRequest, RefreshFastifyRequest } from 'src/commons/types/fastify'
-import { getAccessTokenCookieOptions, getRefreshTokenCookieOptions } from 'src/commons/constants'
 import { DeleteSessionsBody } from './dto/delete-sessions.dto'
 import { DeleteSessionParams } from './dto/delete-session.dto'
 import { VerifyAccountBody } from './dto/verify-account.dto'
+import { CookieService } from 'src/utils/cookie.service'
 
 @Controller('api/auth')
 export class AuthController {
-	constructor(private authService: AuthService, private configService: ConfigService) {}
+	constructor(private authService: AuthService, private readonly cookieService: CookieService) {}
 
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
 	async login(@Req() req: any, @Res({ passthrough: true }) res: FastifyReply) {
 		const { accessToken, refreshToken, user } = await this.authService.login(req.user)
 
-		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
-		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+		const { accessTokenCookieName, accessTokenCookieOptions } =
+			this.cookieService.getAccessTokenCookieOptions()
+		const { refreshTokenCookieName, refreshTokenCookieOptions } =
+			this.cookieService.getRefreshTokenCookieOptions()
 
-		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions()).setCookie(
-			refreshTokenCookieName,
-			refreshToken,
-			getRefreshTokenCookieOptions(),
-		)
+		res.setCookie(accessTokenCookieName, accessToken, accessTokenCookieOptions)
+		res.setCookie(refreshTokenCookieName, refreshToken, refreshTokenCookieOptions)
 
 		return { accessToken, user }
 	}
@@ -40,18 +38,19 @@ export class AuthController {
 	@Get('refresh')
 	@UseGuards(RefreshAuthGuard)
 	async refresh(@Req() req: RefreshFastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
-		const refreshTokenCookie =
-			req.cookies[this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')]
+		const { accessTokenCookieName, accessTokenCookieOptions } =
+			this.cookieService.getAccessTokenCookieOptions()
+		const { refreshTokenCookieName, refreshTokenCookieOptions } =
+			this.cookieService.getRefreshTokenCookieOptions()
+
+		const refreshTokenCookie = req.cookies[refreshTokenCookieName]
 
 		const { accessToken, refreshToken, user } = await this.authService.refresh({
 			refreshTokenCookie,
 		})
 
-		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
-		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
-
-		res.setCookie(accessTokenCookieName, accessToken, getAccessTokenCookieOptions())
-		res.setCookie(refreshTokenCookieName, refreshToken, getRefreshTokenCookieOptions())
+		res.setCookie(accessTokenCookieName, accessToken, accessTokenCookieOptions)
+		res.setCookie(refreshTokenCookieName, refreshToken, refreshTokenCookieOptions)
 
 		return { accessToken, user }
 	}
@@ -91,17 +90,18 @@ export class AuthController {
 		})
 	}
 
-	// TODO: make this RefreshToken only route, can't be accessed with just a accessToken
 	@Delete('logout')
 	@UseGuards(RefreshAuthGuard)
 	async logout(@Req() req: RefreshFastifyRequest, @Res({ passthrough: true }) res: FastifyReply) {
-		const accessTokenCookieName = this.configService.get('JWT_ACCESS_TOKEN_COOKIE_NAME')
-		const refreshTokenCookieName = this.configService.get('JWT_REFRESH_TOKEN_COOKIE_NAME')
+		const { accessTokenCookieName, accessTokenCookieOptions } =
+			this.cookieService.getAccessTokenCookieOptions()
+		const { refreshTokenCookieName, refreshTokenCookieOptions } =
+			this.cookieService.getRefreshTokenCookieOptions()
 
 		await this.authService.deleteRefreshToken(req.cookies[refreshTokenCookieName])
 
-		res.clearCookie(accessTokenCookieName, getAccessTokenCookieOptions())
-		res.clearCookie(refreshTokenCookieName, getRefreshTokenCookieOptions())
+		res.clearCookie(accessTokenCookieName, accessTokenCookieOptions)
+		res.clearCookie(refreshTokenCookieName, refreshTokenCookieOptions)
 
 		return {
 			message: 'Logout Successful',
