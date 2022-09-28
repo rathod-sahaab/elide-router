@@ -1,12 +1,11 @@
 # development docker container
 FROM node:16.14-alpine
 
-RUN npm install -g pnpm
+RUN npm install -g pnpm @nestjs/cli
 
-USER node
 # Create app directory
 WORKDIR /elide-backend
 
-COPY --chown=node:node . .
+COPY . .
 
 CMD ["pnpm", "prod:docker"]

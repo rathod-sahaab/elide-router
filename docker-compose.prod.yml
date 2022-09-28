@@ -20,8 +20,6 @@ services:
          - BULL_REDIS_HOST=redis
          - BULL_REDIS_PORT=6379
          - MONGO_URI=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017
-      volumes:
-         - eldie_nodemodules:/app/node_modules
 
    postgres:
       image: postgres:14-alpine
@@ -78,28 +76,30 @@ services:
       volumes:
          - letsencrypt_certs:/etc/letsencrypt
          - certbot_acme_challenge:/var/www/certbot
+      depends_on:
+         - nginx
 
    cron:
       build: ./proxy/cron
-      image: evgeniy-khyst/cron
       environment:
-         COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
-      COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
+         - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
       volumes:
          - /var/run/docker.sock:/var/run/docker.sock
          - ./:/workdir:ro
       restart: unless-stopped
+      depends_on:
+         - nginx
+         - certbot
 
 
 volumes:
    elide_postgres:
       driver: local
-   eldie_nodemodules:
-      driver: local
    elide_mongo:
       driver: local
    nginx_conf:
-      external: true
+      driver: local
    letsencrypt_certs:
-      external: true
+      driver: local
    certbot_acme_challenge:
+      driver: local
