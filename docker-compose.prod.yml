@@ -55,6 +55,40 @@ services:
       volumes:
          - elide_mongo:/data/db
 
+   nginx:
+      build: ./proxy/nginx
+      env_file:
+         - ./proxy/proxy.env
+      volumes:
+         - nginx_conf:/etc/nginx/sites
+         - letsencrypt_certs:/etc/letsencrypt
+         - certbot_acme_challenge:/var/www/certbot
+         - ./vhosts:/etc/nginx/vhosts
+         - ./html:/var/www/html
+      ports:
+            - "80:80"
+            - "443:443"
+      restart: unless-stopped
+
+   certbot:
+      build: ./proxy/certbot
+      env_file:
+         - ./proxy/proxy.env
+      volumes:
+         - letsencrypt_certs:/etc/letsencrypt
+         - certbot_acme_challenge:/var/www/certbot
+
+   cron:
+      build: ./proxy/cron
+      image: evgeniy-khyst/cron
+      environment:
+      COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
+      volumes:
+         - /var/run/docker.sock:/var/run/docker.sock
+         - ./:/workdir:ro
+      restart: unless-stopped
+
+
 volumes:
    elide_postgres:
       driver: local
@@ -62,3 +96,8 @@ volumes:
       driver: local
    elide_mongo:
       driver: local
+   nginx_conf:
+      external: true
+   letsencrypt_certs:
+      external: true
+   certbot_acme_challenge:
