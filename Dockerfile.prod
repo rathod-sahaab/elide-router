@@ -9,4 +9,4 @@ WORKDIR /elide-backend
 
 COPY --chown=node:node . .
 
-CMD ["pnpm", "dev:docker"]
+CMD ["pnpm", "prod:docker"]
