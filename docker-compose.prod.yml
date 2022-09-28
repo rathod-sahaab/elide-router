@@ -97,7 +97,8 @@ volumes:
    elide_mongo:
       driver: local
    nginx_conf:
-      external: true
+      driver: local
    letsencrypt_certs:
-      external: true
+      driver: local
    certbot_acme_challenge:
+      driver: local
