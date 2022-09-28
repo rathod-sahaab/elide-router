@@ -1,5 +1,4 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { AuthGuard } from '@nestjs/passport'
 import { FastifyReply } from 'fastify'
 import { CookieService } from 'src/utils/cookie.service'
