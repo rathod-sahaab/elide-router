@@ -80,7 +80,6 @@ services:
 
    cron:
       build: ./proxy/cron
-      image: evgeniy-khyst/cron
       environment:
          - COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME}
       volumes:
