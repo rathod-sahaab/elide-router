@@ -8,10 +8,10 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 
 RUN pnpm install
-RUN pnpm prisma generate
 
 COPY . .
 
+RUN pnpm prisma generate
 RUN pnpm run build
 
 FROM node:16.14-alpine As production
