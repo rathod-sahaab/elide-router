@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 
-RUN pnpm install --only=development
+RUN pnpm install --dev
 
 COPY . .
 
@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 
-RUN pnpm install --only=production
+RUN pnpm install --prod
 
 COPY . .
 
