@@ -1,5 +1,7 @@
 FROM node:16.14-alpine As development
 
+RUN npm install -g pnpm
+
 WORKDIR /usr/src/app
 
 COPY package.json ./
@@ -12,6 +14,8 @@ COPY . .
 RUN npm run build
 
 FROM node:16.14-alpine As production
+
+RUN npm install -g pnpm
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
