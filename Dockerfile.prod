@@ -8,6 +8,7 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 
 RUN pnpm install
+RUN pnpm prisma generate
 
 COPY . .
 
@@ -31,4 +32,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/main"]
+CMD ["pnpm", "start:prod"]
