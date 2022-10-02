@@ -34,4 +34,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["pnpm", "start:prod"]
+CMD ["./prod.sh"]
