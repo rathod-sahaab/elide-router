@@ -11,7 +11,7 @@ RUN pnpm install --dev
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 FROM node:16.14-alpine As production
 
