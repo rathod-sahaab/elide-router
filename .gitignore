@@ -36,9 +36,6 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# Package Managers
-yarn.lock
-pnpm-lock.yaml
 
 # devel db artifacts
 dev.db

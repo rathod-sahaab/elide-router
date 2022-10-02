@@ -1,11 +1,30 @@
-# development docker container
-FROM node:16.14-alpine
+FROM node:16.14-alpine As development
 
-RUN npm install -g pnpm @nestjs/cli
+WORKDIR /usr/src/app
 
-# Create app directory
-WORKDIR /elide-backend
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+RUN pnpm install --only=development
 
 COPY . .
 
-CMD ["pnpm", "prod:docker"]
+RUN npm run build
+
+FROM node:16.14-alpine As production
+
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+
+RUN pnpm install --only=production
+
+COPY . .
+
+COPY --from=development /usr/src/app/dist ./dist
+
+CMD ["node", "dist/main"]
