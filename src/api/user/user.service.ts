@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	NotFoundException,
 	UnauthorizedException,
@@ -76,8 +77,8 @@ export class UserService {
 	}) {
 		const user = await this.userRepository.user({ id: userId })
 
-		if (!this.cryptoService.verifyPassword(password, user.passwordHash)) {
-			throw new UnauthorizedException('Invalid password')
+		if (!(await this.cryptoService.verifyPassword(password, user.passwordHash))) {
+			throw new ForbiddenException('Invalid password')
 		}
 
 		await this.userRepository.updateUser(
@@ -115,7 +116,7 @@ export class UserService {
 		})
 
 		if (!invitation || invitation.userId !== userId) {
-			throw new UnauthorizedException('Invalid invitation')
+			throw new ForbiddenException('Invalid invitation')
 		}
 
 		{
@@ -143,7 +144,7 @@ export class UserService {
 		})
 
 		if (!invitation || invitation.userId !== userId) {
-			throw new UnauthorizedException('Invalid invitation')
+			throw new ForbiddenException('Invalid invitation')
 		}
 
 		await this.organisationInvitationRepository.rejectInvitation({

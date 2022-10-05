@@ -78,14 +78,14 @@ export class CryptoService {
 
 	signForgotPasswordToken(data: ForgotPasswordPayload): string | null {
 		return this.jwtSigner(data, {
-			secret: this.configService.get('JWT_FORGOT_PASSWORD_SECRET'),
-			validity: this.configService.get('JWT_FORGOT_PASSWORD_VALIDITY'),
+			secret: this.configService.get('JWT_PASSWORD_RESET_SECRET'),
+			validity: this.configService.get('JWT_PASSWORD_RESET_VALIDITY'),
 		})
 	}
 
 	verifyForgotPasswordToken(token: string): ForgotPasswordPayload {
 		return this.jwtVerifier(token, {
-			secret: this.configService.get('JWT_FORGOT_PASSWORD_SECRET'),
+			secret: this.configService.get('JWT_PASSWORD_RESET_SECRET'),
 		}) as ForgotPasswordPayload
 	}
 }
