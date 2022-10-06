@@ -3,7 +3,6 @@ import {
 	ForbiddenException,
 	Injectable,
 	NotFoundException,
-	UnauthorizedException,
 } from '@nestjs/common'
 import { UserEntity } from 'src/data/entities/user.entity'
 import { UserRepository } from 'src/data/repositories/user.repository'
