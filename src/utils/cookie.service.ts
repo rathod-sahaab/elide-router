@@ -3,11 +3,16 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import ms = require('ms')
 
-const dateInFuture = (duration: string) => new Date(Date.now() + ms(duration))
-
 @Injectable()
 export class CookieService {
 	constructor(private readonly configService: ConfigService) {}
+
+	dateFromDateInFuture(date: Date, duration: string) {
+		return new Date(date.getTime() + ms(duration))
+	}
+	dateFromNowInFuture(duration: string) {
+		return this.dateFromDateInFuture(new Date(), duration)
+	}
 
 	getAccessTokenCookieOptions(): {
 		accessTokenCookieName: string
@@ -17,7 +22,7 @@ export class CookieService {
 			accessTokenCookieName: this.configService.get<string>('JWT_ACCESS_TOKEN_COOKIE_NAME'),
 			accessTokenCookieOptions: {
 				httpOnly: true,
-				expires: dateInFuture('15m'),
+				expires: this.dateFromNowInFuture('15m'),
 				domain: this.configService.get<string>('COOKIE_DOMAIN'),
 				path: '/',
 				secure: false,
@@ -34,7 +39,7 @@ export class CookieService {
 			refreshTokenCookieName: this.configService.get<string>('JWT_REFRESH_TOKEN_COOKIE_NAME'),
 			refreshTokenCookieOptions: {
 				httpOnly: true,
-				expires: dateInFuture('30d'),
+				expires: this.dateFromNowInFuture('30d'),
 				domain: this.configService.get<string>('COOKIE_DOMAIN'),
 				path: '/',
 				secure: false,
