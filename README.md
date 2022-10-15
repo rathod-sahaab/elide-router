@@ -1,73 +1,28 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Elide.in
+Collaborative, URL simplification tool with war-room like analytics.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![image](https://user-images.githubusercontent.com/31929374/194424631-91435909-3254-407b-99e3-4bef4fd867e3.png)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Manage your links, make them more readable and memorable, collablorate with your teams, insightful analytics and war-room like realtime updates. All using an app with beautiful UI and a UX that makes sense.
 
-## Description
+Did I mention that the app is OpenSource under MIT license! Pitch a feature you would like and someone very cool can implement your idea, better still you can add it yourself!
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Analytics
 
-## Installation
+![image](https://user-images.githubusercontent.com/31929374/194425815-d4729c46-8522-4efe-a2c4-8078d9aecfe3.png)
 
-```bash
-$ npm install
-```
+![image](https://user-images.githubusercontent.com/31929374/194425858-0797233d-1256-4f0b-98cb-e82228d10ba8.png)
 
-## Running the app
+## Organisations
+A feature to assemble you teams and do epic things together!
 
-```bash
-# development
-$ npm run start
+![image](https://user-images.githubusercontent.com/31929374/194426030-3254a405-f90a-4d7c-aa9e-f7556e67439e.png)
 
-# watch mode
-$ npm run start:dev
+## Projects
+Like folders, to keep you organised, just create a project and click the button to activate it. Any links created will be under that project!
 
-# production mode
-$ npm run start:prod
-```
+![image](https://user-images.githubusercontent.com/31929374/194426902-194c2411-fd86-44ef-9b94-7a5f01ab8dca.png)
+![image](https://user-images.githubusercontent.com/31929374/194426969-eb057e33-7c2f-4ef9-b9b8-74f42f20c5c0.png)
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
--  Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
--  Website - [https://nestjs.com](https://nestjs.com/)
--  Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Organisations with Projects
+Final piece to up your collab game!
