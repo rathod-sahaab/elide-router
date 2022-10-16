@@ -16,7 +16,9 @@ export class VerifiedAccountGuard implements CanActivate {
 		}
 
 		if (!user.verified) {
-			throw new ForbiddenException('Your account must be verified before you can perform this action, please visit profile page.')
+			throw new ForbiddenException(
+				'Your account must be verified before you can perform this action, please visit profile page.',
+			)
 		}
 
 		return true

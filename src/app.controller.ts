@@ -34,6 +34,7 @@ export class AppController {
 		const visitorIdCookieName: string = this.configService.get('VISITOR_ID_COOKIE_NAME')
 		const visitorIdCookie = req.cookies[visitorIdCookieName]
 
+		// TODO: getVisitorId middle ware
 		const visitorId = isMongoId(visitorIdCookie)
 			? visitorIdCookie
 			: new Types.ObjectId().toString()
@@ -49,6 +50,7 @@ export class AppController {
 
 		if (visitorId !== visitorIdCookie) {
 			// this means we generated new cookie
+			// FIXME: set cookie options (domain, path, secure, httpOnly, sameSite) etc.
 			res.setCookie(visitorIdCookieName, visitorId.toString())
 		}
 
